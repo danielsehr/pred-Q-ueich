@@ -1,11 +1,13 @@
 from tqdm import tqdm
 import os
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 import pandas as pd
 import geopandas as gpd
 import xarray as xr
 import rioxarray
+
 
 
 # --- Paths ---
@@ -65,6 +67,8 @@ for path in tqdm(hyras_paths):
 
 df_concat = pd.concat(dfs, axis="index")
 
+df_concat.plot()
+plt.show()
 
 # --- Export data ---
 output_path = hyras_dir / "precip_mean_queich_watershed.csv"
