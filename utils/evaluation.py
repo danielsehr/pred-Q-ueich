@@ -70,8 +70,8 @@ def evaluate_model(
                 new_run_id = f"{new_run_id:04d}"
                 run_name = f"run_{new_run_id}_rmse_{rmse:.3f}"
 
-                save_path = Path(save_dir) / run_name
-                save_path.mkdir(parents=True, exist_ok=True)
+                folder_path = Path(save_dir) / run_name
+                folder_path.mkdir(parents=True, exist_ok=True)
         
         else:
             run_name = f"run_0000_rmse_{rmse:.3f}"
