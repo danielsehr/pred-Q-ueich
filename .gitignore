@@ -1,2 +1,6 @@
+# Folders
 data/
 evaluation/
+
+# Files
+*.pyc
