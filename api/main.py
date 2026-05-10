@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from database.db import SessionLocal 
 from database.models import Forecast
 
+
 app = FastAPI()
 
 @app.get("/forecast")
