@@ -15,7 +15,7 @@ def get_forecast():
     
     return [
         {
-            "timestamp": r.timestamp,
+            "timestamp": r.timestamp.isoformat(),
             "observed": r.observed,
             "predicted": r.predicted,
         }
