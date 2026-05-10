@@ -4,3 +4,4 @@ evaluation/
 
 # Files
 *.pyc
+*.db
