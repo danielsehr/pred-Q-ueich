@@ -14,4 +14,4 @@ df = pd.DataFrame(data)
 
 #--- Dashboard ---
 st.title("Queich Forecast Dashboard")
-st.line_chart(df[["observed", "predicted"]])
+st.line_chart(df[["discharge"]])
