@@ -1,21 +1,7 @@
 import requests
 import pandas as pd
+from config import URL, HEADERS
 
-URL = (
-    "https://geodaten-wasser.rlp-umwelt.de/"
-    "api/data/messstellen_wasserstand_abflusswerte_30"
-    "?w=messstellennummer=2377050700"
-)
-
-HEADERS  = {
-    "User-Agent": (
-        "Mozilla/5.0 (X11; Linux x86_64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/120.0 Safari/537.36"
-    ),
-    "Accept": "application/json, text/plain, */*",
-    "Referer": "https://geodaten-wasser.rlp-umwelt.de/",
-}
 
 def prepare_data(df):
     df = df.dropna(subset=["abfluss"])
@@ -39,7 +25,6 @@ def prepare_data(df):
         .sort_index()
     )
 
-    
     return df
 
 
