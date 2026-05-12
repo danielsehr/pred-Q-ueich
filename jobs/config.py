@@ -1,3 +1,5 @@
+# Config file for GET request for discharge data 
+
 URL = (
     "https://geodaten-wasser.rlp-umwelt.de/"
     "api/data/messstellen_wasserstand_abflusswerte_30"
