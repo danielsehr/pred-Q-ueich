@@ -1,0 +1,36 @@
+from pathlib import Path
+
+from database.queries import load_discharge_data
+from model.features import create_features
+from model.dataset import TimeSeriesDataset
+from model.build_model import model
+
+
+# Load data
+df = load_discharge_data()
+
+df = create_features(df)
+
+# Create dataset
+dataset = TimeSeriesDataset(df)
+
+train_dataset, val_dataset, test_dataset = (
+    dataset.create_datasets()
+)
+
+
+# Fit model
+model.fit(
+    train_dataset[0], 
+    train_dataset[1],
+    eval_set=[(val_dataset[0], val_dataset[1])],
+)
+
+
+# Save model
+save_dir = Path("models")
+model_name = "xgb_model.json"
+save_path = save_dir / model_name
+
+model.save_model(save_path)
+print(f"Saved model '{model_name}' to {save_path}")
