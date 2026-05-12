@@ -5,6 +5,7 @@ from database.models import Discharge
 
 from jobs.fetch_discharge import fetch
 
+
 def write_to_db(df):
     session: Session = SessionLocal()
 
