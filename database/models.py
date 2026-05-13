@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, DateTime
+from sqlalchemy import Column, Float, String, DateTime
 from database.db import Base
 
 
@@ -10,9 +10,14 @@ class Discharge(Base):
 
     discharge = Column(Float, nullable=False)
 
-class Forecast(Base):
-    __tablename__ = "forecast"
+
+class Inference(Base):
+    __tablename__ = "inference"
 
     timestamp = Column(DateTime, primary_key=True)
 
-    predicted = Column(Float, nullable=False)
+    observed = Column(Float, nullable=False)
+    
+    predicted = Column(Float)
+    
+    model_version = Column(String)
