@@ -8,13 +8,16 @@
           <mxGeometry height="100" width="270" x="-540" y="150" as="geometry" />
         </mxCell>
         <mxCell id="ehalMH3xRm4g4yir4-K0-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;" value="" vertex="1">
-          <mxGeometry height="240" width="160" x="-270" y="320" as="geometry" />
+          <mxGeometry height="260" width="440" x="-290" y="310" as="geometry" />
         </mxCell>
-        <mxCell id="ehalMH3xRm4g4yir4-K0-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="API" vertex="1">
+        <mxCell id="ehalMH3xRm4g4yir4-K0-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;api/&lt;/font&gt;&lt;/b&gt;" vertex="1">
           <mxGeometry height="240" width="120" x="280" y="320" as="geometry" />
         </mxCell>
-        <mxCell id="ehalMH3xRm4g4yir4-K0-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="dashboard" vertex="1">
+        <mxCell id="ehalMH3xRm4g4yir4-K0-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;dashboard/&lt;/b&gt;&lt;/font&gt;" vertex="1">
           <mxGeometry height="60" width="120" x="540" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="oLgXWIG1biT4XLVKZrcB-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="200" width="150" x="-260" y="340" as="geometry" />
         </mxCell>
         <mxCell id="ehalMH3xRm4g4yir4-K0-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="fetch_discharge.py" vertex="1">
           <mxGeometry height="60" width="120" x="-530" y="180" as="geometry" />
@@ -27,7 +30,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="ehalMH3xRm4g4yir4-K0-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;div&gt;ingest_discharge.py&lt;/div&gt;" vertex="1">
+        <mxCell id="ehalMH3xRm4g4yir4-K0-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;ingest_discharge.py&lt;/font&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="120" x="-400" y="180" as="geometry" />
         </mxCell>
         <mxCell id="ehalMH3xRm4g4yir4-K0-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="geodaten-wasser.rlp-umwelt.de" vertex="1">
@@ -55,20 +58,33 @@
             <mxPoint x="225" y="-142" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="ehalMH3xRm4g4yir4-K0-18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 14px; color: light-dark(rgb(0, 0, 0), rgb(151, 208, 119));&quot;&gt;Discharge&lt;/font&gt;" vertex="1">
-          <mxGeometry height="60" width="120" x="-250" y="370" as="geometry" />
+        <mxCell id="ehalMH3xRm4g4yir4-K0-18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 14px; color: light-dark(rgb(0, 0, 0), rgb(166, 128, 184));&quot;&gt;class&lt;/font&gt;&lt;font style=&quot;font-size: 14px; color: light-dark(rgb(0, 0, 0), rgb(151, 208, 119));&quot;&gt; Discharge&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="-245" y="370" as="geometry" />
         </mxCell>
-        <mxCell id="ehalMH3xRm4g4yir4-K0-21" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;queich.db&lt;/b&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="90" x="-235" y="330" as="geometry" />
+        <mxCell id="ehalMH3xRm4g4yir4-K0-21" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;database/&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="90" x="-105" y="340" as="geometry" />
         </mxCell>
-        <mxCell id="ehalMH3xRm4g4yir4-K0-22" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(151, 208, 119));&quot;&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Prediction&lt;/font&gt;&lt;/span&gt;" vertex="1">
-          <mxGeometry height="60" width="120" x="-250" y="460" as="geometry" />
+        <mxCell id="ehalMH3xRm4g4yir4-K0-22" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 14px; color: light-dark(rgb(0, 0, 0), rgb(166, 128, 184));&quot;&gt;class&lt;/font&gt;&lt;font style=&quot;font-size: 14px; color: light-dark(rgb(0, 0, 0), rgb(151, 208, 119));&quot;&gt;&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(151, 208, 119));&quot;&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Prediction&lt;/font&gt;&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="-245" y="460" as="geometry" />
         </mxCell>
         <mxCell id="ehalMH3xRm4g4yir4-K0-30" edge="1" parent="1" source="ehalMH3xRm4g4yir4-K0-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="ehalMH3xRm4g4yir4-K0-2">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="ehalMH3xRm4g4yir4-K0-28" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;queries.py&lt;/b&gt;&lt;/font&gt;" vertex="1">
           <mxGeometry height="60" width="120" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="oLgXWIG1biT4XLVKZrcB-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;queich.db&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="-130" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="oLgXWIG1biT4XLVKZrcB-3" edge="1" parent="1" source="oLgXWIG1biT4XLVKZrcB-1" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="ehalMH3xRm4g4yir4-K0-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points" />
+            <mxPoint x="-120" y="610" as="sourcePoint" />
+            <mxPoint x="-70" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oLgXWIG1biT4XLVKZrcB-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;models.py&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="90" x="-230" y="340" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
