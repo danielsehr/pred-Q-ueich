@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 
 from database.db import SessionLocal 
-from database.models import Discharge, Forecast
+from database.models import Discharge, Inference
+from database.queries import load_discharge_data, load_inference_data
 
 
 # Create web application instance -> main backend server object
@@ -12,17 +13,11 @@ app = FastAPI()
 @app.get("/forecast")
 
 def get_forecast():
-    # Create live DB session / connection
-    session = SessionLocal()
+    df_discharge = load_discharge_data()
+    df_inference = load_inference_data()
     
-    # Query forecast table in SQL for all rows -> SELECT * FROM forecast
-    rows = session.query(Discharge).all()
-    
-    # Return row objects in list of dicts, FastAPI directly dumps it into json http response
-    return [
-        {
-            "timestamp": r.timestamp.isoformat(),
-            "discharge": r.discharge,
-        }
-        for r in rows
-    ]
+    return {
+        "discharge": df_discharge.reset_index().to_dict(orient="records"),
+        "inference": df_inference.reset_index().to_dict(orient="records")
+    }
+        
