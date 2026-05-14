@@ -1,9 +1,7 @@
 # Config file for GET request for discharge data 
 
 URL = (
-    "https://geodaten-wasser.rlp-umwelt.de/"
-    "api/data/messstellen_wasserstand_abflusswerte_30"
-    "?w=messstellennummer=2377050700"
+    "https://geodaten-wasser.rlp-umwelt.de/api/data/messstellen_wasserstand_abflusswerte_30?w=messstellennummer=2377050700"
 )
 
 HEADERS  = {
