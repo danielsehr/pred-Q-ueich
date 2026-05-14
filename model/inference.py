@@ -13,7 +13,7 @@ def load_model():
     return model
 
 
-def predict(df: pd.DataFrame):
+def run_inference(df: pd.DataFrame):
     model = load_model()
     
     return model.predict(df)
