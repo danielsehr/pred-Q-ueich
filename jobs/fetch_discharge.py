@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-from config import URL, HEADERS
+from jobs.config import URL, HEADERS
 
 
 def prepare_data(df):
