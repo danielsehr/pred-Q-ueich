@@ -4,17 +4,19 @@ from jobs.config import URL, HEADERS
 
 
 def prepare_data(df):
-    df = df.dropna(subset=["abfluss"])
+    df = df.copy()
     
-    df["datestring"] = pd.to_datetime(df["datestring"])
-
-    df["abfluss"] = (
-            df["abfluss"]
-            .str.replace(",", ".", regex=False)
-            .pipe(pd.to_numeric)
-            .dropna()
+    df["datestring"] = pd.to_datetime(
+        df["datum"], 
+        format="%d.%m.%Y %H:%M"
         )
 
+    df["abfluss"] = pd.to_numeric(
+            df["abfluss"]
+            .str.replace(",", ".", regex=False),
+            errors="coerce"
+        )
+    
     df = (
         df[["datestring", "abfluss"]]
         .rename(columns={
@@ -25,6 +27,8 @@ def prepare_data(df):
         .sort_index()
     )
 
+    df = df.dropna(subset=["discharge"])
+    
     return df
 
 
