@@ -6,28 +6,58 @@ from database.models import Discharge
 from jobs.fetch_discharge import fetch
 
 
+def get_last_timestamp(session: Session):
+    result = (
+        session.query(Discharge.timestamp)
+        .order_by(Discharge.timestamp.desc())
+        .first()
+    )
+    return result[0] if result else None
+
+
 def write_to_db(df):
     session: Session = SessionLocal()
 
     try:
-        for timestamp, row in df.iterrows():
+        last_timestamp = get_last_timestamp(session)
+        
+        if last_timestamp is not None:
+            df = df[df.index > last_timestamp]
+        
+        if df.empty:
+            print("No new data.")
+            return
 
-            entry = Discharge(
+        entries = [
+            Discharge(
                 timestamp=timestamp,
                 discharge=row["discharge"],
             )
+            for timestamp, row in df.iterrows()
+        ]
 
-            session.merge(entry)
-
+        session.add_all(entries)
         session.commit()
+        
+        print(f"[DISCHARGE] Inserted {len(df)} rows.")
+
+
+    except Exception:
+        session.rollback()
+        return
+
 
     finally:
         session.close()
 
 
-if __name__ == "__main__":
+def main():
     df = fetch()
-
+    
     write_to_db(df)
 
-    print(f"Inserted {len(df)} rows.")
+
+if __name__ == "__main__":
+    main()
+
+    
