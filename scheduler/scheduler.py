@@ -1,5 +1,5 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-from scheduler.config import JOBS
+from configs.scheduler_config import JOBS
 
 
 def run_initial_ingestion():
