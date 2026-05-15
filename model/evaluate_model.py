@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from database.queries import load_discharge_data
-from model.features import create_features
+from model.features import create_training_features
 from model.dataset import TimeSeriesDataset
 from model.build_model import model
 from model.evaluation import evaluate_model
@@ -14,7 +14,7 @@ model_dir = Path("models/xgb_model.json")
 # Load data
 df = load_discharge_data()
 
-df = create_features(df)
+df = create_training_features(df)
 
 # Create dataset
 dataset = TimeSeriesDataset(df)
