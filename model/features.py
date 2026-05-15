@@ -81,3 +81,28 @@ def create_features(
 
     
     return df
+
+
+def create_training_features(
+    df: pd.DataFrame,
+    horizon: int = 1,
+) -> pd.DataFrame:
+    
+    df = create_features(df)
+    
+    # --- Create shifted target by 15 min -> Predict horizon ---
+    df["target"] = df["discharge"].shift(-horizon)
+    df.dropna(inplace=True)
+    
+    return df
+
+
+def create_inference_features(
+    df: pd.DataFrame,
+) -> pd.DataFrame:
+    
+    df = create_features(df)
+    
+    latest = df.tail(1)
+    
+    return latest
