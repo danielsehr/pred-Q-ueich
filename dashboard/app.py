@@ -5,7 +5,7 @@ from streamlit_autorefresh import st_autorefresh
 import plotly.graph_objects as go
 
 from prepare_data import prepare_data
-from config import config
+from configs.dashboard_config import config
 
 
 # auto refresh every minute
