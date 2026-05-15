@@ -62,8 +62,7 @@ def add_sum_features(
 
 
 def create_features(
-    df: pd.DataFrame,
-    horizon: int = 1
+    df: pd.DataFrame
     ) -> pd.DataFrame:
     
     # --- Date transform ---
@@ -74,11 +73,6 @@ def create_features(
     
     # --- Summed features ---
     df = add_sum_features(df)
-
-    # --- Create shifted target by 15 min -> Predict horizon ---
-    df["target"] = df["discharge"].shift(-horizon)
-    df.dropna(inplace=True)
-
     
     return df
 
