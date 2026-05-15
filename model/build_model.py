@@ -1,4 +1,4 @@
-from model.config import hparams
+from configs.model_config import hparams
 from xgboost import XGBRegressor
 
 
