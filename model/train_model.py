@@ -1,15 +1,26 @@
 from pathlib import Path
+import pandas as pd
 
 from database.queries import load_discharge_data
-from model.features import create_features
+from model.features import create_training_features
 from model.dataset import TimeSeriesDataset
 from model.build_model import model
 
 
 # Load data
-df = load_discharge_data()
+# df = load_discharge_data()
+df = pd.read_csv(
+    "discharge_siebeldingen_2026-0514.csv",
+    decimal=",", 
+    sep=";", 
+    na_values="-"
+    )
 
-df = create_features(df)
+df = df.dropna()
+df = df.set_index(keys=["timestamp"])
+df.index = pd.to_datetime(df.index, format="%d.%m.%Y %H:%M")
+
+df = create_training_features(df)
 
 # Create dataset
 dataset = TimeSeriesDataset(df)
