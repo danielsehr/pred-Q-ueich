@@ -1,28 +1,36 @@
 import numpy as np
 import pandas as pd
 
+from configs.model_config import shift_vars, sum_vars, shift_lags, sum_lags, inference_steps
+
 
 
 def add_time_transform(df: pd.DataFrame) -> pd.DataFrame:
+    
+    DAYS_PER_YEAR = 356
+    HOURS_PER_DAY = 24
+    MINUTES_PER_HOUR = 60
+    
     df = df.copy()
+    
     df.index = pd.to_datetime(df.index)
 
     # Day of year transform
-    df["doy_sin"] = np.sin(2 * np.pi * df.index.dayofyear / 365)
-    df["doy_cos"] = np.cos(2 * np.pi * df.index.dayofyear / 365)
+    df["doy_sin"] = np.sin(2 * np.pi * df.index.dayofyear / DAYS_PER_YEAR)
+    df["doy_cos"] = np.cos(2 * np.pi * df.index.dayofyear / DAYS_PER_YEAR)
     
     # Minute of day transform
-    minutes_of_day = (df.index.hour * 60 + df.index.minute)
-    df["mod_sin"] = np.sin(2 * np.pi * minutes_of_day / (24 * 60))
-    df["mod_cos"] = np.cos(2 * np.pi * minutes_of_day / (24 * 60))
+    minutes_of_day = (df.index.hour * MINUTES_PER_HOUR + df.index.minute)
+    df["mod_sin"] = np.sin(2 * np.pi * minutes_of_day / (HOURS_PER_DAY * MINUTES_PER_HOUR))
+    df["mod_cos"] = np.cos(2 * np.pi * minutes_of_day / (HOURS_PER_DAY * MINUTES_PER_HOUR))
 
     return df
 
 
-def add_lag_features(
+def add_shift_features(
     df: pd.DataFrame, 
-    lag_vars: list[str] = ["pr", "temp", "pet", "discharge"],
-    lags: list[int] = [1, 2, 4, 8, 12, 24, 48, 96]
+    lag_vars: list[str],
+    lags: list[int]
     ) -> pd.DataFrame:
 
     df = df.copy()
@@ -39,9 +47,12 @@ def add_lag_features(
 
 def add_sum_features(
     df: pd.DataFrame,
-    sum_vars: list[str] = ["pr", "discharge"],
-    lags: list[int] = [3, 7, 14, 21, 28, 35, 42, 56] # in days
+    sum_vars: list[str],
+    lags: list[int]
     ) -> pd.DataFrame:
+    
+    TIMESTEPS_PER_HOUR = 4
+    TIMESTEPS_PER_DAY = 96
     
     df = df.copy()
     
@@ -49,10 +60,10 @@ def add_sum_features(
     
     for col in cols:    
         if any(p in col for p in sum_vars):
-            for d in lags:
-                window = d * 24 * 4
+            for day in lags:
+                window = day * TIMESTEPS_PER_DAY * TIMESTEPS_PER_HOUR
                 
-                df[f"{col}_sum_{d}d"] = (
+                df[f"{col}_sum_{day}d"] = (
                     df[col]
                     .rolling(window, min_periods=1)
                     .sum()
@@ -68,18 +79,18 @@ def create_features(
     # --- Date transform ---
     df = add_time_transform(df)
     
-    # --- Lag features    
-    df = add_lag_features(df)
+    # --- Shift lag features    
+    df = add_shift_features(df, lags=shift_lags, lag_vars=shift_vars)
     
-    # --- Summed features ---
-    df = add_sum_features(df)
+    # --- Summed lag features ---
+    df = add_sum_features(df, lags=sum_lags, sum_vars=sum_vars)
     
     return df
 
 
 def create_training_features(
     df: pd.DataFrame,
-    horizon: int = 1,
+    horizon: int = inference_steps,
 ) -> pd.DataFrame:
     
     df = create_features(df)
