@@ -4,37 +4,35 @@ import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 import plotly.graph_objects as go
 
+from prepare_data import prepare_data
+from config import config
 
-API_URL = "http://localhost:8000/forecast"
-REFRESH_INTERVAL = 60_000
 
 # auto refresh every minute
 st_autorefresh(
-    interval=REFRESH_INTERVAL,
+    interval=config["REFRESH_INTERVAL"],
     key="dashboard_refresh",
 )
 
-response = requests.get(API_URL)
-print("response:", response)
 
-data = response.json()
+# --- GET request ---
+try:
+    response = requests.get(config["API_URL"], timeout=10)
+    response.raise_for_status()
+
+    data = response.json()
+
+except requests.RequestException as e:
+    st.error(f"API unavailable: {e}")
+    st.stop()
 
 
+# --- Prepare data for plotting ---
 df_discharge = pd.DataFrame(data["discharge"])
 df_inference = pd.DataFrame(data["inference"])
 
-df_discharge = df_discharge.set_index(keys=["timestamp"])
-df_inference = df_inference.set_index(keys=["timestamp"])
-
-df_discharge.index = pd.to_datetime(df_discharge.index)
-df_inference.index = pd.to_datetime(df_inference.index)
-
-
-cutoff = df_discharge.index[-1] - pd.Timedelta(days=1)
-
-df_discharge = (
-    df_discharge[df_discharge.index >= cutoff]
-)
+df_discharge = prepare_data(df_discharge, days=1)
+df_inference = prepare_data(df_inference, days=1)
 
 
 #--- Dashboard ---
