@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from database.db import SessionLocal
 from database.models import Inference
 from database.queries import load_discharge_data
-from model.features import create_features
+from model.features import create_inference_features
 from model.inference import run_inference
 import pandas as pd
 
@@ -35,7 +35,7 @@ def write_to_db(df) -> None:
 def build_forecast_dataframe(
     preds,
     history_index,
-    freq: str = "1h"
+    freq: str = "15min"
     ):
     
     last_timestamp = history_index[-1]
@@ -62,16 +62,14 @@ def build_forecast_dataframe(
 def main() -> None:
     discharge = load_discharge_data()
     
-    features = create_features(df=discharge)
-    features = features.drop(columns="target")
-    latest_features = features.tail(1)
+    features = create_inference_features(df=discharge)
     
-    inference = run_inference(df=latest_features)
+    inference = run_inference(df=features)
     
     inference = build_forecast_dataframe(
         preds=inference,
         history_index=features.index,
-        freq="1h"
+        freq="15min"
     )
     
     write_to_db(inference)
