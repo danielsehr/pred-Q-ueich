@@ -1,6 +1,8 @@
 import requests
 import pandas as pd
+
 from configs.jobs_config import URL, HEADERS
+from utils.logger import logger
 
 
 def prepare_data(df):
@@ -33,9 +35,14 @@ def prepare_data(df):
 
 
 def fetch():
-    response = requests.get(URL, headers=HEADERS, timeout=30)
-    response.raise_for_status()
+    try:
+        response = requests.get(URL, headers=HEADERS, timeout=30)
+        response.raise_for_status()
     
-    df = pd.DataFrame(response.json())
+        df = pd.DataFrame(response.json())
 
-    return prepare_data(df)
+        return prepare_data(df)
+        
+    except requests.RequestException as e:
+        logger.exception("Failed to fetch discharge data: %s", response)
+        raise
