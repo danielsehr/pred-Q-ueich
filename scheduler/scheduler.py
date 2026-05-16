@@ -1,12 +1,14 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from configs.scheduler_config import JOBS
+from logger.logger import logger
 
 
 def run_initial_ingestion():
     print("[INIT] Running intial ingestion")
     
     for job in JOBS:
-        print(f"[INIT] {job['name']}")
+        logger.info("[INIT] %s", job['name'])
+        # print(f"[INIT] {job['name']}")
         job["func"]()
 
 
@@ -23,7 +25,8 @@ def start_scheduler():
             id=job["name"],
         )
 
-    print("[SCHEDULER] Running...")
+    logger.info("[SCHEDULER] Running...")
+    # print("[SCHEDULER] Running...")
     scheduler.start()
 
 
