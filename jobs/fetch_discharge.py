@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 
-from configs.jobs_config import URL, HEADERS
+from configs.jobs_config import DISCHARGE_URL, DISCHARGE_HEADERS
 from utils.logger import logger
 
 
@@ -36,7 +36,7 @@ def prepare_data(df):
 
 def fetch():
     try:
-        response = requests.get(URL, headers=HEADERS, timeout=30)
+        response = requests.get(DISCHARGE_URL, headers=DISCHARGE_HEADERS, timeout=30)
         response.raise_for_status()
     
         df = pd.DataFrame(response.json())
