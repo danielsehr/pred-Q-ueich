@@ -1,11 +1,12 @@
 from sqlalchemy.orm import Session
+import pandas as pd
 
+from utils.logger import logger
 from database.db import SessionLocal
 from database.models import Inference
 from database.queries import load_discharge_data
 from model.features import create_inference_features
 from model.inference import run_inference
-import pandas as pd
 
 
 def write_to_db(df) -> None:
@@ -74,7 +75,8 @@ def main() -> None:
     
     write_to_db(inference)
 
-    print(f"[INFERENCE] Inserted {len(inference)} rows.")
+    logger.info("[INFERENCE] Inserted %s rows.", len(inference))
+    # print(f"[INFERENCE] Inserted {len(inference)} rows.")
 
         
         
