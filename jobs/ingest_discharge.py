@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from database.db import SessionLocal
 from database.models import Discharge
 
+from utils.logger import logger
 from jobs.fetch_discharge import fetch
 
 
@@ -25,7 +26,7 @@ def write_to_db(df):
             df = df[df.index > last_timestamp]
         
         if df.empty:
-            print("No new data.")
+            logger.info("No new data.")
             return
 
         entries = [
@@ -39,7 +40,8 @@ def write_to_db(df):
         session.add_all(entries)
         session.commit()
         
-        print(f"[DISCHARGE] Inserted {len(df)} rows.")
+        logger.info("[DISCHARGE] Inserted %s rows.", len(df))
+        # print(f"[DISCHARGE] Inserted {len(df)} rows.")
 
 
     except Exception:
