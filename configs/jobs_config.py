@@ -1,10 +1,9 @@
-# Config file for GET request for discharge data 
-
-URL = (
+# --- fetch_discharge.py --- 
+DISCHARGE_URL = (
     "https://geodaten-wasser.rlp-umwelt.de/api/data/messstellen_wasserstand_abflusswerte_30?w=messstellennummer=2377050700"
 )
 
-HEADERS  = {
+DISCHARGE_HEADERS  = {
     "User-Agent": (
         "Mozilla/5.0 (X11; Linux x86_64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -13,3 +12,9 @@ HEADERS  = {
     "Accept": "application/json, text/plain, */*",
     "Referer": "https://geodaten-wasser.rlp-umwelt.de/",
 }
+
+
+# --- fetch_icon.py ---
+ICON_URL = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/tot_prec/"
+
+ICON_OUTPUT_DIR = "data/forecast_precip/icon_d2/compressed"
