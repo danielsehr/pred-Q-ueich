@@ -6,3 +6,4 @@ evaluation/
 *.pyc
 *.db
 *.csv
+*/README.md
