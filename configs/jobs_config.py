@@ -18,3 +18,7 @@ DISCHARGE_HEADERS  = {
 ICON_URL = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/tot_prec/"
 
 ICON_OUTPUT_DIR = "data/forecast_precip/icon_d2/compressed"
+
+
+# --- decompress.py ---
+DECOMPRESSED_DIR = "data/forecast_precip/icon_d2/decompressed"
