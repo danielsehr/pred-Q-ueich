@@ -22,3 +22,7 @@ ICON_OUTPUT_DIR = "data/forecast_precip/icon_d2/compressed"
 
 # --- decompress.py ---
 DECOMPRESSED_DIR = "data/forecast_precip/icon_d2/decompressed"
+
+
+# --- process.py ---
+CATCHMENT_PATH = "data/catchment/catchment_queich_siebeldingen.gpkg"
