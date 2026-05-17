@@ -39,3 +39,28 @@ def clip_to_catchment(
     # )
     
     return precip_crop  
+
+
+def extract_precip_timeseries(
+    precip: xr.Dataset,
+    ) -> pd.DataFrame:
+    
+    rows = []
+
+    for i in range(len(precip.step)):
+        
+        precip_step = precip.isel(step=i)
+        
+        forecast_time = pd.to_datetime(precip_step.valid_time.values)
+        precip_cum_mean = float(precip_step.mean())
+        
+        rows.append({
+            "timestamp": forecast_time,
+            "precip_cum_mean": precip_cum_mean
+        })
+        
+    df = pd.DataFrame(rows)
+    df = df.set_index("timestamp")
+    
+    return df
+    
