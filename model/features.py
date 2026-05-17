@@ -7,7 +7,7 @@ from configs.model_config import shift_vars, sum_vars, shift_lags, sum_lags, inf
 
 def add_time_transform(df: pd.DataFrame) -> pd.DataFrame:
     
-    DAYS_PER_YEAR = 356
+    DAYS_PER_YEAR = 365
     HOURS_PER_DAY = 24
     MINUTES_PER_HOUR = 60
     
