@@ -158,3 +158,7 @@ def main() -> None:
             file_name=row["filename"],
             output_dir=ICON_OUTPUT_DIR,
         )
+
+
+if __name__ == "__main__":
+    main()
