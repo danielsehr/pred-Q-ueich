@@ -43,7 +43,7 @@ fig.add_trace(
     go.Scatter(
         x=df_discharge.index,
         y=df_discharge["discharge"],
-        mode="lines",
+        mode="lines+markers",
         name="Observed",
     )
 )
