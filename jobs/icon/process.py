@@ -79,6 +79,7 @@ def build_precip_timeseries(
     dfs: list[pd.DataFrame] = []
     
     
+    # --- Open dataset and extract ---
     for file in file_paths:
         try:
             ds = xr.open_dataset(file, engine="cfgrib")
@@ -101,22 +102,25 @@ def build_precip_timeseries(
             ds.close()
         
         
-        if not dfs:
-            raise ValueError("No valid precipitation files processed.")
+    if not dfs:
+        raise ValueError("No valid precipitation files processed.")
         
-        
+    
+    # --- process dataframe ---
     df = pd.concat(dfs)
     
-    df = (
-        df
-        .sort_index()
-        .drop_duplicates()
-    )
-    
+    df = df.sort_index()
+    df = df[~df.index.duplicated(keep="last")]
+
     df.index.name = "timestamp"
 
     # cumulative → incremental precipitation
     df["precip_mean"] = df["precip_cum_mean"].diff()
+
+    # detect reset (new forecast cycle)
+    reset_mask = df["precip_cum_mean"].diff() < 0
+    df.loc[reset_mask, "precip_mean"] = df["precip_cum_mean"]
+
 
     df = (
         df
