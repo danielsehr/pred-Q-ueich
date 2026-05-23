@@ -6,7 +6,7 @@ from configs.jobs_config import ICON_OUTPUT_DIR, DECOMPRESSED_DIR
 from utils.logger import logger
 
 
-def decompress_bz2(
+def decompress_bz2_file(
     source_path: str | Path,
     target_path: str | Path | None = None,
     ) -> Path:
@@ -25,7 +25,7 @@ def decompress_bz2(
     return target_path
 
 
-def main(
+def decompress_bz2_dir(
     input_dir: str | Path,
     output_dir: str | Path
     ) -> None:
@@ -49,7 +49,7 @@ def main(
             continue
         
         
-        decompress_bz2(
+        decompress_bz2_file(
             source_path=source_path, 
             target_path=target_path
         )
@@ -61,7 +61,7 @@ def main(
 
 
 if __name__ == "__main__":
-    main(
+    decompress_bz2_dir(
         input_dir=ICON_OUTPUT_DIR,
         output_dir=DECOMPRESSED_DIR
     )
