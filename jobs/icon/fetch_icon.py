@@ -39,9 +39,9 @@ def get_forecast_time(href: str) -> pd.Timestamp:
     return forecast_time
 
 
-def get_icon_metadata(url: str | Path) -> pd.DataFrame:
+def fetch_icon_metadata(url: str | Path) -> pd.DataFrame:
     try:
-        response = requests.get(url, timeout=30)
+        response = requests.get(str(url), timeout=30)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "html.parser")
@@ -104,8 +104,7 @@ def get_local_forecast_times(directory: str | Path):
     return forecast_times
     
     
-
-def fetch_icon_file(
+def download_icon_file(
     root_url: str,
     file_name: str,
     output_dir: str
@@ -140,9 +139,9 @@ def fetch_icon_file(
 
 
 
-def main() -> None:
+def fetch_icon() -> None:
     
-    df_remote = get_icon_metadata(url=ICON_URL)
+    df_remote = fetch_icon_metadata(url=ICON_URL)
     local_times = get_local_forecast_times(directory=ICON_OUTPUT_DIR)
 
     df_missing = df_remote[
@@ -153,7 +152,7 @@ def main() -> None:
     
     for _, row in df_missing.iterrows():
 
-        fetch_icon_file(
+        download_icon_file(
             root_url=ICON_URL,
             file_name=row["filename"],
             output_dir=ICON_OUTPUT_DIR,
@@ -161,4 +160,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    fetch_icon()
