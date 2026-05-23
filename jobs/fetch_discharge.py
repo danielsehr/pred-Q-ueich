@@ -34,7 +34,7 @@ def prepare_data(df):
     return df
 
 
-def fetch():
+def fetch_discharge():
     try:
         response = requests.get(DISCHARGE_URL, headers=DISCHARGE_HEADERS, timeout=30)
         response.raise_for_status()

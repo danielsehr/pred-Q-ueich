@@ -4,7 +4,7 @@ from database.db import SessionLocal
 from database.models import Discharge
 
 from utils.logger import logger
-from jobs.fetch_discharge import fetch
+from jobs.fetch_discharge import fetch_discharge
 
 
 def get_last_timestamp(session: Session):
@@ -54,7 +54,7 @@ def write_to_db(df):
 
 
 def main():
-    df = fetch()
+    df = fetch_discharge()
     
     write_to_db(df)
 
