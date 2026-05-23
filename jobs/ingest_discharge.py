@@ -41,11 +41,11 @@ def write_to_db(df):
         session.commit()
         
         logger.info("[DISCHARGE] Inserted %s rows.", len(df))
-        # print(f"[DISCHARGE] Inserted {len(df)} rows.")
 
 
     except Exception:
         session.rollback()
+        logger.exception("[DISCHARGE] Failed DB ingestion.")
         return
 
 
@@ -53,7 +53,8 @@ def write_to_db(df):
         session.close()
 
 
-def main():
+
+def main() -> None:
     df = fetch_discharge()
     
     write_to_db(df)
@@ -61,5 +62,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    

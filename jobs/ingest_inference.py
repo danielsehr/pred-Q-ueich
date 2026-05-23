@@ -9,7 +9,7 @@ from model.features import create_inference_features
 from model.inference import run_inference
 
 
-def write_to_db(df) -> None:
+def write_to_db(df: pd.DataFrame) -> None:
     session: Session = SessionLocal()
     
     try:
@@ -24,10 +24,15 @@ def write_to_db(df) -> None:
             session.merge(entry)
         
         session.commit()
+        
+        logger.info("[INFERENCE] Inserted %s rows.", len(df))
+         
     
     except Exception:
         session.rollback()
+        logger.exception("[INFERENCE] Failed DB ingestion.")
         raise
+        
         
     finally:
         session.close()
@@ -60,6 +65,7 @@ def build_forecast_dataframe(
     return df
 
 
+
 def main() -> None:
     discharge = load_discharge_data()
     
@@ -75,10 +81,6 @@ def main() -> None:
     
     write_to_db(inference)
 
-    logger.info("[INFERENCE] Inserted %s rows.", len(inference))
-    # print(f"[INFERENCE] Inserted {len(inference)} rows.")
-
-        
         
 if __name__ == "__main__":
     main()
