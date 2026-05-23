@@ -112,6 +112,8 @@ def build_precip_timeseries(
         .sort_index()
         .drop_duplicates()
     )
+    
+    df.index.name = "timestamp"
 
     # cumulative → incremental precipitation
     df["precip_mean"] = df["precip_cum_mean"].diff()
