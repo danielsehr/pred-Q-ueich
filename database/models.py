@@ -29,7 +29,7 @@ class Inference(Base):
     # model_version = Column(String)
     
 
-class IconPrecipMeanForecast(Base):
+class IconPrecipForecast(Base):
     __tablename__ = "icon_precip_mean_forecast"
     
     __table_args__ = (
