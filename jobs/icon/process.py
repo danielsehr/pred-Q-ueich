@@ -64,3 +64,62 @@ def extract_precip_timeseries(
     
     return df
     
+
+def build_precip_timeseries(
+    input_dir: str | Path,
+    catchment_path: str | Path,
+    clip_crs: str
+    ) -> pd.DataFrame:
+    
+    input_dir = Path(input_dir)
+    
+    catchment = gpd.read_file(catchment_path).to_crs(clip_crs)
+    file_paths = sorted(input_dir.glob("*.grib2"))
+    
+    dfs: list[pd.DataFrame] = []
+    
+    
+    for file in file_paths:
+        try:
+            ds = xr.open_dataset(file, engine="cfgrib")
+
+            precip_crop = clip_to_catchment(
+                dataset=ds,
+                catchment=catchment,
+                crs=clip_crs
+            )
+
+            df_precip = extract_precip_timeseries(precip=precip_crop)
+            
+            dfs.append(df_precip)
+        
+        except Exception:
+            logger.exception("Failed to open GRIB file: %s", file)
+            continue
+        
+        finally:
+            ds.close()
+        
+        
+        if not dfs:
+            raise ValueError("No valid precipitation files processed.")
+        
+        
+    df = pd.concat(dfs)
+    
+    df = (
+        df
+        .sort_index()
+        .drop_duplicates()
+    )
+
+    # cumulative → incremental precipitation
+    df["precip_mean"] = df["precip_cum_mean"].diff()
+
+    df = (
+        df
+        .drop(columns=["precip_cum_mean"])
+        .dropna()
+    )
+
+    return df
