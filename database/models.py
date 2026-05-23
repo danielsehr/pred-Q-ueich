@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, String, DateTime
+from sqlalchemy import Column, Float, String, DateTime, UniqueConstraint
 from database.db import Base
 
 
@@ -14,10 +14,31 @@ class Discharge(Base):
 class Inference(Base):
     __tablename__ = "inference"
 
+    __table_args__ = (
+        UniqueConstraint(
+            "timestamp",
+            # "model_version",
+            name="uq_inference_timestamp_model",
+        ),
+    )
+
     timestamp = Column(DateTime, primary_key=True)
 
-    observed = Column(Float, nullable=False)
-    
     predicted = Column(Float)
     
-    model_version = Column(String)
+    # model_version = Column(String)
+    
+
+class IconPrecipMeanForecast(Base):
+    __tablename__ = "icon_precip_mean_forecast"
+    
+    __table_args__ = (
+        UniqueConstraint(
+            "timestamp",
+            name="uq_icon_precip_mean_forecast_timestamp_model",
+        ),
+    )
+    
+    timestamp = Column(DateTime, primary_key=True)
+    
+    precip_mean = Column(Float)
