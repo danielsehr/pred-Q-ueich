@@ -156,5 +156,6 @@ def fetch_radolan() -> None:
 
     logger.info("Downloaded %s new precip observation files", files)
 
+
 if __name__ == "__main__":
     fetch_radolan()
