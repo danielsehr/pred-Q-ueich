@@ -144,7 +144,7 @@ def fetch_radolan() -> None:
     logger.info("Found %s new precip observation files", len(df_missing))
     
     files = 0
-    for _, row in df_missing[:10].iterrows():
+    for _, row in df_missing.iterrows():
 
         download_radolan_file(
             root_url=RADOLAN_URL,
