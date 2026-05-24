@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup, Tag
 import pandas as pd
 
-# from configs.jobs_config import 
+from configs.jobs_config import RADOLAN_URL, RADOLAN_OUTPUT_DIR, RADOLAN_DECOMPRESSED_DIR
 from utils.logger import logger 
 
 
@@ -33,7 +33,7 @@ def get_observation_date(href: str) -> pd.Timestamp:
     return pd.to_datetime(date, format="%y%m%d")
 
 
-def fetch_icon_metadata(url: str | Path) -> pd.DataFrame:
+def fetch_radolan_metadata(url: str | Path) -> pd.DataFrame:
     try:
         response = requests.get(str(url), timeout=30)
         response.raise_for_status()
@@ -80,17 +80,17 @@ def fetch_icon_metadata(url: str | Path) -> pd.DataFrame:
         raise
     
 
-def get_local_forecast_times(directory: str | Path):
+def get_local_observation_date(directory: str | Path):
     directory = Path(directory)
     
-    forecast_times = set()
+    observation_dates = set()
     
     for file in directory.glob("*.tar.gz"):
-        forecast_time = get_observation_date(href=file.name)
+        observation_date = get_observation_date(href=file.name)
         
-        forecast_times.add(forecast_time)
+        observation_dates.add(observation_date)
         
-    return forecast_times
+    return observation_dates
 
 
 def download_radolan_file(
@@ -130,3 +130,31 @@ def download_radolan_file(
         logger.exception("Failed writing file: %s", output_path)
         raise
     
+    
+    
+def fetch_radolan() -> None:
+    
+    df_remote = fetch_radolan_metadata(url=RADOLAN_URL)
+    local_times = get_local_observation_date(directory=RADOLAN_OUTPUT_DIR)
+
+    df_missing = df_remote[
+        ~df_remote["datetime_observation"].isin(local_times)
+    ]
+
+    logger.info("Found %s new precip observation files", len(df_missing))
+    
+    files = 0
+    for _, row in df_missing[:10].iterrows():
+
+        download_radolan_file(
+            root_url=RADOLAN_URL,
+            file_name=row["filename"],
+            output_dir=RADOLAN_OUTPUT_DIR,
+        )
+        
+        files += 1
+
+    logger.info("Downloaded %s new precip observation files", files)
+
+if __name__ == "__main__":
+    fetch_radolan()
