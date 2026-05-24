@@ -76,13 +76,10 @@ def radolan_to_xarray(
         )
     
     data_xr = (
-    data_xr
-    .rio.set_spatial_dims(x_dim="x", y_dim="y")
-    .rio.write_crs(wrl.georef.projection.create_crs("dwd-radolan"))
-)  
-    # data_xr = data_xr.rio.write_crs(
-    #     wrl.georef.projection.create_crs("dwd-radolan")
-    # )
+        data_xr
+        .rio.set_spatial_dims(x_dim="x", y_dim="y")
+        .rio.write_crs(wrl.georef.projection.create_crs("dwd-radolan"))
+        )  
 
     return data_xr
 
