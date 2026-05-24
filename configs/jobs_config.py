@@ -34,6 +34,6 @@ CLIP_CRS = "EPSG: 4326"
 # --- RADOLAN PRECIP OBSERVATION ---
 RADOLAN_URL = "https://opendata.dwd.de/climate_environment/CDC/grids_germany/5_minutes/radolan/recent/"
 
-ICON_OUTPUT_DIR = "data/observed_precip/radolan/compressed"
+RADOLAN_OUTPUT_DIR = "data/observed_precip/radolan/compressed"
 
 RADOLAN_DECOMPRESSED_DIR = "data/observed_precip/radolan/decompressed"
