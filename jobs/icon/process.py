@@ -114,7 +114,7 @@ def build_precip_timeseries(
 
     df.index.name = "timestamp"
 
-    # cumulative → incremental precipitation
+    # cumulative -> incremental precipitation
     df["precip_mean"] = df["precip_cum_mean"].diff()
 
     # detect reset (new forecast cycle)
