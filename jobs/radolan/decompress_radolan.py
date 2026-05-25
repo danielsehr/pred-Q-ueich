@@ -1,9 +1,25 @@
 from pathlib import Path
 import shutil
 import tarfile
+import pandas as pd
 
 from configs.jobs_config import RADOLAN_OUTPUT_DIR, RADOLAN_DECOMPRESSED_DIR
 from utils.logger import logger
+
+
+def extract_radolan_timestamp(
+    file_path: str | Path
+    ) -> pd.Timestamp:
+    
+    stem = Path(file_path).stem
+    
+    _, back = stem.split("-")
+
+    timestring = Path(back).name.removesuffix(".tar")
+    
+    observation_time = pd.to_datetime(timestring, format="%y%m%d")
+    
+    return observation_time
 
 
 def decompress_tar_file(
@@ -13,10 +29,6 @@ def decompress_tar_file(
     
     source_path = Path(source_path)
     target_dir = Path(target_dir)
-    # folder_name = Path(source_path.stem).stem
-    
-    # target_dir = Path(target_dir) / folder_name
-    # target_dir.mkdir(parents=True, exist_ok=True)
 
 
     with tarfile.open(source_path, mode="r:gz") as tar:
@@ -25,9 +37,11 @@ def decompress_tar_file(
     return target_dir
 
 
+
 def decompress_tar_dir(
     input_dir: str | Path,
-    output_dir: str | Path
+    output_dir: str | Path,
+    days: int
     ) -> None:
     
     input_dir = Path(input_dir)
@@ -35,8 +49,17 @@ def decompress_tar_dir(
     
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    file_paths = [p for p in input_dir.rglob("*.tar.gz")]
+    
+    # Decompress only specific timedelta
+    cutoff = pd.Timestamp.now() - pd.Timedelta(days=days)
+    
+    file_paths = [
+        p for p in input_dir.rglob("*.tar.gz")
+        if extract_radolan_timestamp(p) >= cutoff
+    ]
+    
     logger.info("Found %s files to decompress", len(file_paths))
+    
     
     decompressed_count = 0
     
@@ -59,9 +82,9 @@ def decompress_tar_dir(
     logger.info("Decompressed %s files", decompressed_count)
 
 
-
 if __name__ == "__main__":
     decompress_tar_dir(
         input_dir=RADOLAN_OUTPUT_DIR,
-        output_dir=RADOLAN_DECOMPRESSED_DIR
+        output_dir=RADOLAN_DECOMPRESSED_DIR,
+        days=30
     )
