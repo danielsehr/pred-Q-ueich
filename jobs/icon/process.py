@@ -11,7 +11,7 @@ def clip_to_catchment(
     dataset: xr.Dataset,
     catchment: gpd.GeoDataFrame,
     crs: str
-    ) -> xr.Dataset:
+    ) -> xr.DataArray:
     
     if "tp" in dataset:
         precip = dataset["tp"]
@@ -42,7 +42,7 @@ def clip_to_catchment(
 
 
 def extract_precip_timeseries(
-    precip: xr.Dataset,
+    precip: xr.DataArray,
     ) -> pd.DataFrame:
     
     rows = []
@@ -52,7 +52,7 @@ def extract_precip_timeseries(
         precip_step = precip.isel(step=i)
         
         forecast_time = pd.to_datetime(precip_step.valid_time.values)
-        precip_cum_mean = float(precip_step.mean())
+        precip_cum_mean = float(precip_step.mean(skipna=True))
         
         rows.append({
             "timestamp": forecast_time,
@@ -95,7 +95,7 @@ def build_precip_timeseries(
             dfs.append(df_precip)
         
         except Exception:
-            logger.exception("Failed to open GRIB file: %s", file)
+            logger.exception("Failed to process ICON GRIB file: %s", file)
             continue
         
         finally:
