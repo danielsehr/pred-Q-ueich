@@ -1,10 +1,11 @@
-from sqlalchemy.orm import Session
 import pandas as pd
+
+from sqlalchemy.orm import Session
+from database.db import SessionLocal
+from database.models import IconPrecipForecast
 
 from configs.jobs_config import ICON_OUTPUT_DIR, DECOMPRESSED_DIR, CATCHMENT_PATH, CLIP_CRS
 from utils.logger import logger
-from database.db import SessionLocal
-from database.models import IconPrecipForecast
 
 from jobs.icon.process import build_precip_timeseries
 from jobs.icon.decompress import decompress_bz2_dir
