@@ -1,5 +1,6 @@
 import pandas as pd
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from database.db import SessionLocal
 from database.models import IconPrecipForecast
@@ -10,6 +11,25 @@ from utils.logger import logger
 from jobs.icon.process import build_precip_timeseries
 from jobs.icon.decompress import decompress_bz2_dir
 from jobs.icon.fetch_icon import fetch_icon
+
+
+def get_latest_timestamp() -> pd.Timestamp | None:
+    session = SessionLocal()
+    
+    try:
+        statement = (
+            select(IconPrecipForecast.timestamp)
+            .order_by(IconPrecipForecast.timestamp.desc())
+            .limit(1)
+        )
+        
+        latest = session.scalar(statement=statement)
+        
+        return pd.Timestamp(latest) if latest is not None else None
+    
+    
+    finally:
+        session.close()
 
 
 def write_to_db(df: pd.DataFrame) -> None:
@@ -54,6 +74,9 @@ def main() -> None:
         catchment_path=CATCHMENT_PATH,
         clip_crs=CLIP_CRS
     )
+    
+    latest_ts = get_latest_timestamp()
+    df_precip_mean = df_precip_mean[df_precip_mean.index > latest_ts]
     
     write_to_db(df_precip_mean)
     
