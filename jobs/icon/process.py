@@ -68,16 +68,16 @@ def extract_precip_timeseries(
 def build_precip_timeseries(
     input_dir: str | Path,
     catchment_path: str | Path,
-    clip_crs: str
+    clip_crs: str,
     ) -> pd.DataFrame:
     
     input_dir = Path(input_dir)
     
-    catchment = gpd.read_file(catchment_path).to_crs(clip_crs)
     file_paths = sorted(input_dir.glob("*.grib2"))
     
-    dfs: list[pd.DataFrame] = []
+    catchment = gpd.read_file(catchment_path).to_crs(clip_crs)
     
+    dfs: list[pd.DataFrame] = []
     
     # --- Open dataset and extract ---
     for file in file_paths:
