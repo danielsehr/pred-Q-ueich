@@ -11,7 +11,7 @@ def prepare_data(
     
     # --- Set cutoff ---
     latest = df.index.max()
-    cutoff = latest -  pd.Timedelta(days=days)
+    cutoff = latest - pd.Timedelta(days=days)
     
     df = df[df.index >= cutoff]
     
