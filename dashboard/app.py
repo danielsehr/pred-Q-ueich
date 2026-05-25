@@ -42,16 +42,16 @@ df_precip_obs = prepare_data(df_precip_obs, days=days)
 df_precip_pred = prepare_data(df_precip_pred, days=days)
 
 
-#--- Dashboard ---
+#--- DASHBOARD ---
 fig  = make_subplots(
     rows=2,
     cols=1,
     shared_xaxes=True,
     vertical_spacing=0.1,
-    row_heights=[0.25, 0.75],
+    row_heights=[0.5, 0.5],
 )
 
-
+# --- PRECIPITATION ---
 # Observed Precipitation
 fig.add_trace(
     go.Bar(
@@ -64,7 +64,18 @@ fig.add_trace(
     col=1,
 )
 
+fig.add_trace(
+    go.Bar(
+        x=df_precip_pred.index,
+        y=df_precip_pred["precip_mean"],
+        name="Forecast Precipitation",
+        opacity=0.7,
+    ),
+    row=1,
+    col=1,
+)
 
+# --- DISCHARGE ---
 # historical
 fig.add_trace(
     go.Scatter(
