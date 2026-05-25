@@ -6,19 +6,19 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from prepare_data import prepare_data
-from configs.dashboard_config import config
+from configs.dashboard_config import API_URL, REFRESH_INTERVAL
 
 
 # auto refresh every minute
 st_autorefresh(
-    interval=config["REFRESH_INTERVAL"],
+    interval=REFRESH_INTERVAL,
     key="dashboard_refresh",
 )
 
 
 # --- GET request ---
 try:
-    response = requests.get(config["API_URL"], timeout=10)
+    response = requests.get(API_URL, timeout=10)
     response.raise_for_status()
 
     data = response.json()
@@ -35,6 +35,7 @@ df_precip_obs = pd.DataFrame(data["precip_obs"])
 df_precip_pred = pd.DataFrame(data["precip_pred"])
 
 days=14
+
 df_discharge = prepare_data(df_discharge, days=days)
 df_inference = prepare_data(df_inference, days=days)
 df_precip_obs = prepare_data(df_precip_obs, days=days)
