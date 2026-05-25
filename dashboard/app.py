@@ -101,19 +101,25 @@ fig.add_trace(
     col=1,
 )
 
+st.set_page_config(layout="wide")
+
 fig.update_layout(
+    title=dict(
+        text="Queich Discharge Forecast", 
+        x=0.5, xanchor="center", 
+        font=dict(
+            size=30
+            )
+        ),
     xaxis_title="Time",
     yaxis_title="Discharge",
     legend=dict(orientation="h"),
     template="plotly_white",
+    height=850
 )
 
 fig.update_yaxes(title_text="Precipitation [mm]", row=1, col=1)
 fig.update_yaxes(title_text="Discharge [m³/s]", row=2, col=1)
 fig.update_xaxes(title_text="Time", row=2, col=1)
-
-
-st.set_page_config(layout="wide")
-fig.update_layout(height=850)
 
 st.plotly_chart(fig, use_container_width=True)
