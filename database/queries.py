@@ -3,154 +3,105 @@ import pandas as pd
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
+from configs.database_config import QUERY_TIMEDELTA_DAYS
 from utils.logger import logger
 from database.db import SessionLocal
 from database.models import Discharge, Inference, IconPrecipForecast, RadolanPrecipObservation
 
 
-def load_discharge_data() -> pd.DataFrame:
-    session = SessionLocal()
-    
-    try:
-        statement = (
-            select(Discharge)
-            .order_by(Discharge.timestamp)
-        )
-        
-        rows = session.execute(statement=statement).scalars().all()
-        
-        df = pd.DataFrame(
-            [
-                {
-                    "timestamp": r.timestamp,
-                    "discharge": r.discharge, 
-                }
-                for r in rows
-            ]
-        )
-        
-        if not df.empty:
-            df = df.set_index(keys="timestamp")
-            
-        return df
-    
-    except SQLAlchemyError:
-        logger.exception("Failed to load discharge data")
-        raise
-    
-    
-    finally:
-        session.close()
-        
 
 
-def load_inference_data() -> pd.DataFrame:
-    session = SessionLocal()
+def load_timeseries(
+    model,
+    value_column: str,
+    output_name: str,
+    days: int,
+    ) -> pd.DataFrame:
     
-    try:
+    end = pd.Timestamp.now(tz="UTC")
+    start = end - pd.Timedelta(days=days)
+
+    
+    column = getattr(model, value_column)
+    
+    with SessionLocal() as session:
         statement = (
-            select(Inference)
-            .order_by(Inference.timestamp)
+            select(model.timestamp, column)
+            .where(model.timestamp >= start)
+            .where(model.timestamp < end)
+            .order_by(model.timestamp)
         )
+
+        rows = session.execute(statement).all()
         
-        rows = session.execute(statement=statement).scalars().all()
         
-        df = pd.DataFrame(
-            [
-                {
-                    "timestamp": r.timestamp,
-                    "predicted": r.predicted,
-                    # "model_version": r.model_version
-                }
-                for r in rows
-            ]
-        )
-        
-        if not df.empty:
-            df = df.set_index(keys="timestamp")
-        
-        return df
+    df = pd.DataFrame(
+        [
+            {
+                "timestamp": ts,
+                output_name: value
+            } for ts, value in rows
+        ] 
+    )
     
-    
-    except SQLAlchemyError:
-        logger.exception("Failed to load inference data")
-        raise
-    
-    
-    finally:
-        session.close()
+    if not df.empty:
+        df = df.set_index("timestamp")
         
+    return df
+
+    
+
+def load_discharge_data(
+    days: int = QUERY_TIMEDELTA_DAYS
+    ) -> pd.DataFrame:
+    
+    df = load_timeseries(
+        model=Discharge, 
+        value_column="discharge",
+        output_name="discharge",
+        days=days
+    )
+    
+    return df
+
+
+def load_inference_data(
+    days: int = QUERY_TIMEDELTA_DAYS
+    ) -> pd.DataFrame:
+    
+    df = load_timeseries(
+        model=Inference, 
+        value_column="predicted",
+        output_name="predicted",
+        days=days
+    )
+    
+    return df
+    
+
+def load_precip_forecast_data(
+    days: int = QUERY_TIMEDELTA_DAYS
+    ) -> pd.DataFrame:
+    
+    df = load_timeseries(
+        model=IconPrecipForecast, 
+        value_column="precip_mean",
+        output_name="precip_mean",
+        days=days
+    )
+    
+    return df
         
 
-def load_precip_forecast_data() -> pd.DataFrame:
-    session = SessionLocal()
+def load_precip_observation_data(
+    days: int = QUERY_TIMEDELTA_DAYS
+    ) -> pd.DataFrame:
     
-    try:
-        statement = (
-            select(IconPrecipForecast)
-            .order_by(IconPrecipForecast.timestamp)
-        )
-        
-        rows = session.execute(statement=statement).scalars().all()
-        
-        df = pd.DataFrame(
-            [
-                {
-                    "timestamp": r.timestamp,
-                    "precip_mean": r.precip_mean,
-                    # "model_version": r.model_version
-                }
-                for r in rows
-            ]
-        )
-        
-        if not df.empty:
-            df = df.set_index(keys="timestamp")
-            
-        return df
+    df = load_timeseries(
+        model=RadolanPrecipObservation, 
+        value_column="precip_mean",
+        output_name="precip_mean",
+        days=days
+    )
     
-    
-    except SQLAlchemyError:
-        logger.exception("Failed to load ICON precip mean forecast data")
-        raise
-        
-        
-    finally:
-        session.close()
-        
-        
-def load_precip_observation_data() -> pd.DataFrame:
-    session = SessionLocal()
-    
-    try:
-        statement = (
-            select(RadolanPrecipObservation)
-            .order_by(RadolanPrecipObservation.timestamp)
-        )
-        
-        rows = session.execute(statement=statement).scalars().all()
-        
-        df = pd.DataFrame(
-            [
-                {
-                    "timestamp": r.timestamp,
-                    "precip_mean": r.precip_mean,
-                    # "model_version": r.model_version
-                }
-                for r in rows
-            ]
-        )
-        
-        if not df.empty:
-            df = df.set_index(keys="timestamp")
-            
-        return df
-    
-    
-    except SQLAlchemyError:
-        logger.exception("Failed to load RADOLAN precip mean observation data")
-        raise
-        
-        
-    finally:
-        session.close()
+    return df
