@@ -136,13 +136,13 @@ def extract_precip_timeseries(
     observed_time = pd.to_datetime(precip_clipped.time.item())
     precip_mean = float(precip_clipped.mean(skipna=True) * 100) # 1/100 mm -> https://www.dwd.de/DE/leistungen/radolan/produktuebersicht/radolan_produktuebersicht_pdf.pdf;jsessionid=71FEFFEE6E0734198012B200CEDA6BD3.live11043?__blob=publicationFile&v=13
 
-    rows = {
+    row = {
         "timestamp": observed_time,
         "precip_cum_mean": precip_mean
         }
     
     
-    return rows
+    return row
 
 
 def build_precip_timeseries(
