@@ -42,3 +42,18 @@ class IconPrecipForecast(Base):
     timestamp = Column(DateTime, primary_key=True)
     
     precip_mean = Column(Float)
+
+
+class IconPrecipObservation(Base):
+    __tablename__ = "icon_precip_mean_observation"
+    
+    __table_args__ = (
+        UniqueConstraint(
+            "timestamp",
+            name="uq_icon_precip_mean_forecast_timestamp_model",
+        ),
+    )
+    
+    timestamp = Column(DateTime, primary_key=True)
+    
+    precip_mean = Column(Float)
