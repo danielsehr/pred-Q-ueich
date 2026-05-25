@@ -1,6 +1,7 @@
 from jobs.ingest_discharge import main as ingest_discharge
 from jobs.ingest_inference import main as ingest_inference
 from jobs.icon.ingest_icon import main as ingest_precip_forecast
+from jobs.radolan.ingest_radolan import main as ingest_precip_observation
 
 
 JOBS = [
@@ -17,6 +18,11 @@ JOBS = [
     {
         "name": "ingest_precip_forecast",
         "func": ingest_precip_forecast,
+        "interval_minutes": 10,
+    },
+    {
+        "name": "ingest_precip_observation",
+        "func": ingest_precip_observation,
         "interval_minutes": 10,
     },
 ]
