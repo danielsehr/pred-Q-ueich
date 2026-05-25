@@ -5,7 +5,7 @@ from streamlit_autorefresh import st_autorefresh
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from prepare_data import prepare_data
+from dashboard.prepare_data import prepare_data
 from configs.dashboard_config import API_URL, REFRESH_INTERVAL
 
 
@@ -97,8 +97,8 @@ fig.update_layout(
     template="plotly_white",
 )
 
-fig.update_yaxes(title_text="Precipitation", row=1, col=1)
-fig.update_yaxes(title_text="Discharge", row=2, col=1)
+fig.update_yaxes(title_text="Precipitation [mm]", row=1, col=1)
+fig.update_yaxes(title_text="Discharge [m³/s]", row=2, col=1)
 fig.update_xaxes(title_text="Time", row=2, col=1)
 
 
