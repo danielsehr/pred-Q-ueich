@@ -2,7 +2,7 @@ from pathlib import Path
 import shutil
 import tarfile
 
-from configs.jobs_config import ICON_OUTPUT_DIR, DECOMPRESSED_DIR
+from configs.jobs_config import RADOLAN_OUTPUT_DIR, RADOLAN_DECOMPRESSED_DIR
 from utils.logger import logger
 
 
@@ -36,11 +36,11 @@ def decompress_tar_dir(
     output_dir.mkdir(parents=True, exist_ok=True)
     
     file_paths = [p for p in input_dir.rglob("*.tar.gz")]
-    
+    logger.info("Found %s files to decompress", len(file_paths))
     
     decompressed_count = 0
     
-    for source_path in file_paths[:5]:
+    for source_path in file_paths:
         target_name = Path(source_path.stem).stem
         target_dir = output_dir / target_name
         
@@ -62,6 +62,6 @@ def decompress_tar_dir(
 
 if __name__ == "__main__":
     decompress_tar_dir(
-        input_dir=ICON_OUTPUT_DIR,
-        output_dir=DECOMPRESSED_DIR
+        input_dir=RADOLAN_OUTPUT_DIR,
+        output_dir=RADOLAN_DECOMPRESSED_DIR
     )
