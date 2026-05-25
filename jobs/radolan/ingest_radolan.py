@@ -1,5 +1,6 @@
 import pandas as pd
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from database.db import SessionLocal
 from database.models import RadolanPrecipObservation
@@ -9,6 +10,26 @@ from utils.logger import logger
 from jobs.radolan.fetch_radolan import fetch_radolan
 from jobs.radolan.decompress_radolan import decompress_tar_dir
 from jobs.radolan.process_radolan import build_precip_timeseries
+
+
+def get_latest_timestamp() -> pd.Timestamp | None:
+    session = SessionLocal()
+    
+    try:
+        statement = (
+            select(RadolanPrecipObservation.timestamp)
+            .order_by(RadolanPrecipObservation.timestamp.desc())
+            .limit(1)
+        )
+        
+        latest = session.scalar(statement=statement)
+        
+        return pd.Timestamp(latest) if latest is not None else None
+    
+    
+    finally:
+        session.close()
+        
 
 
 def write_to_db(df: pd.DataFrame) -> None:
@@ -45,15 +66,19 @@ def main() -> None:
     
     decompress_tar_dir(
         input_dir=RADOLAN_OUTPUT_DIR,
-        output_dir=RADOLAN_DECOMPRESSED_DIR
+        output_dir=RADOLAN_DECOMPRESSED_DIR,
+        days=30
     )
     
-    # df_precip_mean = build_precip_timeseries(
-    #     input_dir=RADOLAN_DECOMPRESSED_DIR,
-    #     catchment_path=CATCHMENT_PATH
-    # )
+    latest_ts = get_latest_timestamp()
     
-    # write_to_db(df_precip_mean)
+    df_precip_mean = build_precip_timeseries(
+        input_dir=RADOLAN_DECOMPRESSED_DIR,
+        catchment_path=CATCHMENT_PATH,
+        start=latest_ts
+    )
+    
+    write_to_db(df_precip_mean)
     
     
 if __name__ == "__main__":
