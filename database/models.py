@@ -44,8 +44,8 @@ class IconPrecipForecast(Base):
     precip_mean = Column(Float)
 
 
-class IconPrecipObservation(Base):
-    __tablename__ = "icon_precip_mean_observation"
+class RadolanPrecipObservation(Base):
+    __tablename__ = "radolan_precip_mean_observation"
     
     __table_args__ = (
         UniqueConstraint(
