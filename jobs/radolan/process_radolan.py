@@ -133,7 +133,7 @@ def extract_precip_timeseries(
         )
 
     observed_time = pd.to_datetime(precip_clipped.time.item())
-    precip_mean = float(precip_clipped.mean(skipna=True) * 100) # 1/100 mm -> https://www.dwd.de/DE/leistungen/radolan/produktuebersicht/radolan_produktuebersicht_pdf.pdf;jsessionid=71FEFFEE6E0734198012B200CEDA6BD3.live11043?__blob=publicationFile&v=13
+    precip_mean = float(precip_clipped.mean(skipna=True)) 
 
     row = {
         "timestamp": observed_time,
@@ -147,13 +147,20 @@ def extract_precip_timeseries(
 def build_precip_timeseries(
     input_dir: str | Path,
     catchment_path: str | Path,
+    start: pd.Timestamp | None = None
     ) -> pd.DataFrame:
     
     input_dir = Path(input_dir)
     
-    catchment = gpd.read_file(catchment_path)
     file_paths = sorted(input_dir.rglob("*--bin"))
-    file_paths = file_paths[:600]
+    
+    if start is not None:
+        file_paths = [
+            p for p in file_paths
+            if extract_radolan_timestamp(p) > start
+        ]
+    
+    catchment = gpd.read_file(catchment_path)
     
     
     # --- Extract dataset ---
