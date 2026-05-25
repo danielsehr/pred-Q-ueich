@@ -6,6 +6,7 @@ import geopandas as gpd
 
 import wradlib as wrl
 import xarray as xr
+import rioxarray
 
 from utils.logger import logger
 
@@ -81,11 +82,9 @@ def radolan_to_xarray(
         name="precip"
         )
     
-    data_xr = (
-        data_xr
-        .rio.set_spatial_dims(x_dim="x", y_dim="y")
-        .rio.write_crs(wrl.georef.projection.create_crs("dwd-radolan"))
-        )  
+    data_xr = data_xr.rio.set_spatial_dims(x_dim="x", y_dim="y")
+    data_xr = data_xr.rio.write_crs(wrl.georef.projection.create_crs("dwd-radolan"))
+        
 
     return data_xr
 
@@ -112,9 +111,9 @@ def clip_to_catchment(
     )
     
     # # --- Optional geometry clip ---
-    # precip_masked = precip_cropped.rio.clip(
+    # precip_crop = precip.rio.clip(
     #     catchment.geometry,
-    #     catchment.crs,
+    #     # catchment.crs,
     #     drop=False,
     # )
     
@@ -138,7 +137,7 @@ def extract_precip_timeseries(
 
     row = {
         "timestamp": observed_time,
-        "precip_cum_mean": precip_mean
+        "precip_mean": precip_mean
         }
     
     
@@ -180,6 +179,11 @@ def build_precip_timeseries(
     df = df.set_index("timestamp")
     df = df.sort_index()
     df = df[~df.index.duplicated(keep="last")]
+    df = df.resample(
+        "15min",
+        # label="right",
+        # closed="right"
+        ).sum()
             
             
     return df
