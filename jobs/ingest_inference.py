@@ -4,7 +4,7 @@ import pandas as pd
 from utils.logger import logger
 from database.db import SessionLocal
 from database.models import Inference
-from database.queries import load_discharge_data
+from database.queries import load_discharge_data, load_precip_observation_data
 from model.features import create_inference_features
 from model.inference import run_inference
 
@@ -65,11 +65,30 @@ def build_forecast_dataframe(
     return df
 
 
+def merge_data(
+    dfs: list[pd.DataFrame]
+    ) -> pd.DataFrame:
+    
+    df_merged = pd.concat(
+        dfs,
+        axis=1,
+        join="inner"
+        )
+    
+    return df_merged.dropna(axis="index")
+    
+
+
 
 def main() -> None:
-    discharge = load_discharge_data()
+    discharge = load_discharge_data(days=30)
+    precip_observation = load_precip_observation_data(days=30)
     
-    features = create_inference_features(df=discharge)
+    dfs = [discharge, precip_observation]
+    
+    merged = merge_data(dfs=dfs)
+    
+    features = create_inference_features(df=merged)
     
     inference = run_inference(df=features)
     
