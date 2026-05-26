@@ -1,6 +1,7 @@
 from pathlib import Path
 import pandas as pd
 
+from configs.model_config import inference_steps
 from database.queries import load_discharge_data
 from model.features import create_training_features
 from model.dataset import TimeSeriesDataset
@@ -20,7 +21,7 @@ df = df.dropna()
 df = df.set_index(keys=["timestamp"])
 df.index = pd.to_datetime(df.index, format="%d.%m.%Y %H:%M")
 
-df = create_training_features(df)
+df = create_training_features(df, horizon=inference_steps)
 
 # Create dataset
 dataset = TimeSeriesDataset(df)
