@@ -29,13 +29,14 @@ def add_time_transform(df: pd.DataFrame) -> pd.DataFrame:
 
 def add_shift_features(
     df: pd.DataFrame, 
+    cols: list[str],
     lag_vars: list[str],
     lags: list[int]
     ) -> pd.DataFrame:
 
     df = df.copy()
     
-    cols = df.columns.to_list()
+    # cols = df.columns.to_list()
     
     for col in cols:  
         if any(p in col for p in lag_vars):
@@ -47,6 +48,7 @@ def add_shift_features(
 
 def add_sum_features(
     df: pd.DataFrame,
+    cols: list[str],
     sum_vars: list[str],
     lags: list[int]
     ) -> pd.DataFrame:
@@ -56,19 +58,25 @@ def add_sum_features(
     
     df = df.copy()
     
-    cols = df.columns.to_list()
+    # cols = df.columns.to_list()
+    new_cols = {}
     
     for col in cols:    
         if any(p in col for p in sum_vars):
             for day in lags:
                 window = day * TIMESTEPS_PER_DAY * TIMESTEPS_PER_HOUR
                 
-                df[f"{col}_sum_{day}d"] = (
+                new_cols[f"{col}_sum_{day}d"] = (
                     df[col]
                     .rolling(window, min_periods=1)
                     .sum()
                     )
 
+    df = pd.concat(
+        [df, pd.DataFrame(new_cols, index=df.index)], 
+        axis=1
+        )
+    
     return df
 
 
@@ -76,14 +84,17 @@ def create_features(
     df: pd.DataFrame
     ) -> pd.DataFrame:
     
+    # Define columns
+    cols = df.columns.to_list()
+    
     # --- Date transform ---
     df = add_time_transform(df)
     
     # --- Shift lag features    
-    df = add_shift_features(df, lags=shift_lags, lag_vars=shift_vars)
+    df = add_shift_features(df, cols=cols, lags=shift_lags, lag_vars=shift_vars)
     
     # --- Summed lag features ---
-    df = add_sum_features(df, lags=sum_lags, sum_vars=sum_vars)
+    df = add_sum_features(df, cols=cols, lags=sum_lags, sum_vars=sum_vars)
     
     return df
 
@@ -91,8 +102,9 @@ def create_features(
 def create_training_features(
     df: pd.DataFrame,
     horizon: int = inference_steps,
-) -> pd.DataFrame:
+    ) -> pd.DataFrame:
     
+    df = df.copy()
     df = create_features(df)
     
     # --- Create shifted target by 15 min -> Predict horizon ---
