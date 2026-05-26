@@ -52,24 +52,60 @@ fig  = make_subplots(
 )
 
 # --- PRECIPITATION ---
+def add_empty_bars(
+    df: pd.Series,
+    epsilon: float,
+    ):
+    
+    plot_vals = df.mask(df == 0, epsilon)
+    
+    return plot_vals
+
+
 # Observed Precipitation
+obs_precip_vals = df_precip_obs["precip_mean"]
+obs_precip_plot_vals = add_empty_bars(
+    df=obs_precip_vals, 
+    epsilon=0.001
+    )
+
 fig.add_trace(
     go.Bar(
         x=df_precip_obs.index,
-        y=df_precip_obs["precip_mean"],
+        y=obs_precip_plot_vals,
+        customdata=obs_precip_vals,
         name="Observed Precipitation",
         opacity=0.7,
+        hovertemplate=(
+            "Time: %{x}<br>"
+            "Obs. Precipitation: %{customdata} mm"
+            "<extra></extra>"
+        ),
     ),
     row=1,
     col=1,
 )
 
+# Predicted Precipitation
+pred_precip_vals = df_precip_pred["precip_mean"]
+pred_precip_plot_vals = add_empty_bars(
+    df=pred_precip_vals, 
+    epsilon=0.001
+    )
+
+
 fig.add_trace(
     go.Bar(
         x=df_precip_pred.index,
-        y=df_precip_pred["precip_mean"],
+        y=pred_precip_plot_vals,
+        customdata=pred_precip_vals,
         name="Forecast Precipitation",
         opacity=0.7,
+        hovertemplate=(
+            "Time: %{x}<br>"
+            "Pred. Precipitation: %{customdata} mm"
+            "<extra></extra>"
+        ),
     ),
     row=1,
     col=1,
