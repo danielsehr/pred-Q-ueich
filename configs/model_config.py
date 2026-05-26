@@ -7,27 +7,27 @@ hparams = {
     # colsample_bytree=0.8,
     "objective": 'reg:squarederror',
     "random_state":42,
-    "early_stopping_rounds": 50
+    "early_stopping_rounds": 150
 }
 
 
 # --- features.py ---
 shift_vars = [
-    "pr", "temp", "pet", "discharge"
+    "discharge", "precip_mean"
     ]
 
 sum_vars = [
-    "pr", "discharge"
+    "discharge", "precip_mean"
     ]
 
 # Lags in lag * timestamp (15 min)
 shift_lags = [
-    1, 2, 4, 8, 12, 24, 48, 96
+    1, 2, 4, 8, 12, 24, 48, 96, 192, 288, 480, 673
     ]
 
 # Lags in days
 sum_lags = [
-    3, 7, 14, 21, 28, 35, 42, 56
+    0.25, 0.5, 1, 2, 3, 5, 7, 14, 21, 28, 35, 42, 56
     ]
 
 # Timesteps of inference. 1 -> 15 min
