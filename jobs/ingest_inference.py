@@ -81,8 +81,8 @@ def merge_data(
 
 
 def main() -> None:
-    discharge = load_discharge_data(days=30)
-    precip_observation = load_precip_observation_data(days=30)
+    discharge = load_discharge_data(days=7)
+    precip_observation = load_precip_observation_data(days=7)
     
     dfs = [discharge, precip_observation]
     
