@@ -2,8 +2,7 @@ from pathlib import Path
 import pandas as pd
 from xgboost import XGBRegressor
 
-
-MODEL_PATH = Path("models/xgb_model.json")
+from configs.model_config import MODEL_PATH
 
 
 def load_model():

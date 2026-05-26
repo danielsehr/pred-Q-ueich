@@ -1,3 +1,5 @@
+from pathlib import Path
+
 # --- build_model.py ---
 hparams = {
     "n_estimators": 10000,
@@ -32,3 +34,7 @@ sum_lags = [
 
 # Timesteps of inference. 1 -> 15 min
 inference_steps = 1
+
+
+# --- inference.py ---
+MODEL_PATH = Path("models/xgb_model_discharge_precip.json")
