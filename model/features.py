@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from configs.model_config import shift_vars, sum_vars, shift_lags, sum_lags, inference_steps
+from configs.model_config import shift_vars, sum_vars, shift_lags, delays, sum_lags, inference_steps
 
 
 
@@ -36,8 +36,6 @@ def add_shift_features(
 
     df = df.copy()
     
-    # cols = df.columns.to_list()
-    
     for col in cols:  
         if any(p in col for p in lag_vars):
             for lag in lags:
@@ -53,24 +51,21 @@ def add_sum_features(
     lags: list[int]
     ) -> pd.DataFrame:
     
-    TIMESTEPS_PER_HOUR = 4
-    TIMESTEPS_PER_DAY = 96
-    
     df = df.copy()
     
-    # cols = df.columns.to_list()
     new_cols = {}
     
     for col in cols:    
         if any(p in col for p in sum_vars):
-            for day in lags:
-                window = day * TIMESTEPS_PER_DAY * TIMESTEPS_PER_HOUR
+            for delay in delays:
+                for window in sum_lags:
                 
-                new_cols[f"{col}_sum_{day}d"] = (
-                    df[col]
-                    .rolling(window, min_periods=1)
-                    .sum()
-                    )
+                    new_cols[f"{col}_delay_{delay}_sum_{window}"] = (
+                        df[col]
+                        .shift(delay)
+                        .rolling(window, min_periods=1)
+                        .sum()
+                        )
 
     df = pd.concat(
         [df, pd.DataFrame(new_cols, index=df.index)], 
@@ -116,8 +111,9 @@ def create_training_features(
 
 def create_inference_features(
     df: pd.DataFrame,
-) -> pd.DataFrame:
+    ) -> pd.DataFrame:
     
+    df = df.copy()
     df = create_features(df)
     
     latest = df.tail(1)
