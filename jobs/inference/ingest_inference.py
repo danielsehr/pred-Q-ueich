@@ -42,9 +42,9 @@ def build_forecast_dataframe(
     preds,
     history_index,
     freq: str = "15min"
-    ):
+    ) -> pd.DataFrame:
     
-    last_timestamp = history_index[-1]
+    last_timestamp = history_index.max()
     
     forecast_index = pd.date_range(
         start=last_timestamp + pd.Timedelta(freq),
@@ -72,10 +72,10 @@ def merge_data(
     df_merged = pd.concat(
         dfs,
         axis=1,
-        join="inner"
+        join="outer"
         )
     
-    return df_merged.dropna(axis="index")
+    return df_merged#.dropna(axis="index")
     
 
 
@@ -92,13 +92,13 @@ def main() -> None:
     
     inference = run_inference(df=features)
     
-    inference = build_forecast_dataframe(
+    df_inference = build_forecast_dataframe(
         preds=inference,
         history_index=features.index,
         freq="15min"
     )
     
-    write_to_db(inference)
+    write_to_db(df_inference)
 
         
 if __name__ == "__main__":
