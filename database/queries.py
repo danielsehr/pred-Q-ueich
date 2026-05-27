@@ -18,7 +18,7 @@ def load_timeseries(
     days: int,
     ) -> pd.DataFrame:
     
-    end = pd.Timestamp.now(tz="UTC")
+    end = pd.Timestamp.now()
     start = end - pd.Timedelta(days=days)
 
     
@@ -27,8 +27,8 @@ def load_timeseries(
     with SessionLocal() as session:
         statement = (
             select(model.timestamp, column)
-            .where(model.timestamp >= start)
-            .where(model.timestamp < end)
+            .where(model.timestamp > start)
+            .where(model.timestamp <= end)
             .order_by(model.timestamp)
         )
 
