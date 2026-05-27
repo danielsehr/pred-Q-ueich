@@ -8,8 +8,8 @@ from database.models import IconPrecipForecast
 from configs.jobs_config import ICON_OUTPUT_DIR, DECOMPRESSED_DIR, CATCHMENT_PATH, CLIP_CRS
 from utils.logger import logger
 
-from jobs.icon.process import build_precip_timeseries
-from jobs.icon.decompress import decompress_bz2_dir
+from jobs.icon.process_icon import build_precip_timeseries
+from jobs.icon.decompress_icon import decompress_bz2_dir
 from jobs.icon.fetch_icon import fetch_icon
 
 
