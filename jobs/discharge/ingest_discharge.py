@@ -4,7 +4,7 @@ from database.db import SessionLocal
 from database.models import Discharge
 
 from utils.logger import logger
-from jobs.fetch_discharge import fetch_discharge
+from jobs.discharge.fetch_discharge import fetch_discharge
 
 
 def get_last_timestamp(session: Session):

@@ -3,6 +3,7 @@ import pandas as pd
 
 from configs.jobs_config import DISCHARGE_URL, DISCHARGE_HEADERS
 from utils.logger import logger
+from jobs.discharge.preprocessing.filtering import hampel_filter
 
 
 def prepare_data(df):
@@ -29,6 +30,8 @@ def prepare_data(df):
         .sort_index()
     )
 
+    df = hampel_filter(df)
+    
     df = df.dropna(subset=["discharge"])
     
     return df
