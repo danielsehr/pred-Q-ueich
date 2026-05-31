@@ -39,22 +39,25 @@ def write_to_db(df: pd.DataFrame) -> None:
         
         
 def build_forecast_dataframe(
-    preds,
-    history_index,
+    delta_discharge,
+    features,
     freq: str = "15min"
     ) -> pd.DataFrame:
     
-    last_timestamp = history_index.max()
+    last_timestamp = features.index.max()
+    last_discharge = features["discharge"].values
     
     forecast_index = pd.date_range(
         start=last_timestamp + pd.Timedelta(freq),
-        periods=len(preds),
+        periods=len(delta_discharge),
         freq=freq,
     )
 
+    predicted_discharge = last_discharge + delta_discharge
+    
     df = pd.DataFrame(
         {
-            "predicted": preds,
+            "predicted": predicted_discharge,
             # "model_version": model_version,
         },
         index=forecast_index,
@@ -93,8 +96,8 @@ def main() -> None:
     inference = run_inference(df=features)
     
     df_inference = build_forecast_dataframe(
-        preds=inference,
-        history_index=features.index,
+        delta_discharge=inference,
+        features=features,
         freq="15min"
     )
     

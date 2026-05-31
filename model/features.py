@@ -103,7 +103,8 @@ def create_training_features(
     df = create_features(df)
     
     # --- Create shifted target by 15 min -> Predict horizon ---
-    df["target"] = df["discharge"].shift(-horizon)
+    # df["target"] = df["discharge"].shift(-horizon)
+    df["target"] = df["discharge"].shift(-horizon) - df["discharge"]
     df.dropna(inplace=True)
     
     return df
