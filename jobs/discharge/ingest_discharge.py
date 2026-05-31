@@ -16,7 +16,7 @@ def get_last_timestamp(session: Session):
     return result[0] if result else None
 
 
-def write_to_db(df):
+def write_to_db(df) -> bool:
     session: Session = SessionLocal()
 
     try:
@@ -27,7 +27,9 @@ def write_to_db(df):
         
         if df.empty:
             logger.info("No new data.")
-            return
+            
+            return False
+
 
         entries = [
             Discharge(
@@ -42,11 +44,13 @@ def write_to_db(df):
         
         logger.info("[DISCHARGE] Inserted %s rows.", len(df))
 
-
+        return True
+        
+        
     except Exception:
         session.rollback()
         logger.exception("[DISCHARGE] Failed DB ingestion.")
-        return
+        return False
 
 
     finally:
@@ -54,10 +58,12 @@ def write_to_db(df):
 
 
 
-def main() -> None:
+def main() -> bool:
     df = fetch_discharge()
     
-    write_to_db(df)
+    inserted = write_to_db(df)
+    
+    return inserted
 
 
 if __name__ == "__main__":
