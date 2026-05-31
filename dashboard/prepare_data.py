@@ -1,6 +1,7 @@
 import pandas as pd
 
-def prepare_df(
+
+def prepare_observation_df(
     df: pd.DataFrame,
     days: int
     ) -> pd.DataFrame:
@@ -18,19 +19,46 @@ def prepare_df(
     return df
 
 
+def prepare_forecast_df(
+    df: pd.DataFrame,
+    # days: int,
+    ) -> pd.DataFrame:
+    
+    # --- Datetime ---
+    df = df.set_index(keys=["timestamp"])
+    df.index = pd.to_datetime(df.index)
+    
+    return df
+
+
 def prepare_datasets(
     data: dict,
     days: int = 14
     ):
     
-    datasets = {
-        "discharge": pd.DataFrame(data["discharge"]),
-        "inference": pd.DataFrame(data["inference"]),
-        "precip_obs": pd.DataFrame(data["precip_obs"]),
-        "precip_pred": pd.DataFrame(data["precip_pred"]),
-    }
+    discharge = pd.DataFrame(data["discharge"])
+    inference = pd.DataFrame(data["inference"])
+    precip_obs = pd.DataFrame(data["precip_obs"])
+    precip_pred = pd.DataFrame(data["precip_pred"])
     
-    return {
-        name: prepare_df(df=df, days=days)
-        for name, df in datasets.items()
-    }
+    datasets = {
+        "discharge": prepare_observation_df(
+            discharge,
+            days=days
+            ),
+        
+        "inference": prepare_forecast_df(
+            inference,
+            ),
+        
+        "precip_obs": prepare_observation_df(
+            precip_obs,
+            days=days
+            ),
+        
+        "precip_pred": prepare_forecast_df(
+            precip_pred,
+            ),
+        }
+    
+    return datasets
