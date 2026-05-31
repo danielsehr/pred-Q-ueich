@@ -14,6 +14,7 @@ DISCHARGE_HEADERS  = {
     "Referer": "https://geodaten-wasser.rlp-umwelt.de/",
 }
 
+
 # --- ICON PRECIP FORECAST ---
 # --- fetch_icon.py ---
 ICON_URL = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/tot_prec/"
@@ -37,3 +38,28 @@ RADOLAN_URL = "https://opendata.dwd.de/climate_environment/CDC/grids_germany/5_m
 RADOLAN_OUTPUT_DIR = "data/observed_precip/radolan/compressed"
 
 RADOLAN_DECOMPRESSED_DIR = "data/observed_precip/radolan/decompressed"
+
+
+# --- TEMP STATIONS OBSERVATION ---
+# --- extract_station_ids.py
+TEMP_STATIONS_URL = "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/air_temperature/recent/zehn_min_tu_Beschreibung_Stationen.txt"
+
+STATIONS_COL_NAMES = [
+    "stations_id",
+    "start_date",
+    "end_date",
+    "stations_alt",
+    "lat",
+    "lon",
+    "stations_name",
+    "county",
+    "license",
+]
+
+CATCHMENT_PATH = "data/catchment/catchment_queich_siebeldingen.gpkg"
+
+WGS84_CRS = "EPSG:4326"
+UTM32N_CRS = "EPSG:25832"
+BUFFER_SIZE = 20_000
+
+STATIONS_WRITE_PATH = "jobs/temp/stations.py"
