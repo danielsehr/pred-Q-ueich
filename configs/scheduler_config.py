@@ -4,15 +4,19 @@ from jobs.icon.ingest_icon import main as ingest_precip_forecast
 from jobs.radolan.ingest_radolan import main as ingest_precip_observation
 
 
+def ingest_discharge_and_inference() -> None:
+    
+    inserted = ingest_discharge()
+    
+    if inserted:
+        ingest_inference()
+    
+
+
 JOBS = [
     {
-        "name": "ingest_inference",
-        "func": ingest_inference,
-        "interval_minutes": 5,
-    },
-    {
-        "name": "ingest_discharge",
-        "func": ingest_discharge,
+        "name": "ingest_discharge_and_inference",
+        "func": ingest_discharge_and_inference,
         "interval_minutes": 10,
     },
     {
