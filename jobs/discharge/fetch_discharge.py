@@ -1,9 +1,13 @@
 import requests
 import pandas as pd
 
-from configs.jobs_config import DISCHARGE_URL, DISCHARGE_HEADERS
+from configs import settings
+
 from utils.logger import logger
 from jobs.discharge.preprocessing.filtering import hampel_filter
+
+
+discharge_settings = settings.ingestion.discharge
 
 
 def prepare_data(df):
@@ -39,7 +43,11 @@ def prepare_data(df):
 
 def fetch_discharge():
     try:
-        response = requests.get(DISCHARGE_URL, headers=DISCHARGE_HEADERS, timeout=30)
+        response = requests.get(
+            discharge_settings.url,
+            headers=discharge_settings.headers,
+            timeout=30
+            )
         response.raise_for_status()
     
         df = pd.DataFrame(response.json())

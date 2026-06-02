@@ -5,12 +5,16 @@ from sqlalchemy.orm import Session
 from database.db import SessionLocal
 from database.models import IconPrecipForecast
 
-from configs.jobs_config import ICON_OUTPUT_DIR, DECOMPRESSED_DIR, CATCHMENT_PATH, CLIP_CRS
+from configs import settings
 from utils.logger import logger
 
 from jobs.icon.process_icon import build_precip_timeseries
 from jobs.icon.decompress_icon import decompress_bz2_dir
 from jobs.icon.fetch_icon import fetch_icon
+
+
+icon_settings = settings.ingestion.icon
+catchment_settings = settings.ingestion.catchment
 
 
 def get_latest_timestamp() -> pd.Timestamp | None:
@@ -65,14 +69,14 @@ def main() -> None:
     fetch_icon()
     
     decompress_bz2_dir(
-        input_dir=ICON_OUTPUT_DIR,
-        output_dir=DECOMPRESSED_DIR
+        input_dir=icon_settings.compressed_dir,
+        output_dir=icon_settings.compressed_dir
     )
     
     df_precip_mean = build_precip_timeseries(
-        input_dir=DECOMPRESSED_DIR,
-        catchment_path=CATCHMENT_PATH,
-        clip_crs=CLIP_CRS
+        input_dir=icon_settings.compressed_dir,
+        catchment_path=catchment_settings.catchment_path,
+        clip_crs=icon_settings.clip_crs
     )
     
     latest_ts = get_latest_timestamp()

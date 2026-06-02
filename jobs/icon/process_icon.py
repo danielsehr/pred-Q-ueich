@@ -3,8 +3,8 @@ import pandas as pd
 import geopandas as gpd
 import xarray as xr
 
-from configs.jobs_config import DECOMPRESSED_DIR
 from utils.logger import logger
+
 
 
 def clip_to_catchment(

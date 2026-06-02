@@ -3,7 +3,12 @@ import shutil
 import bz2
 
 from configs.jobs_config import ICON_OUTPUT_DIR, DECOMPRESSED_DIR
+from configs import settings
+
 from utils.logger import logger
+
+
+icon_settings = settings.ingestion.icon
 
 
 def decompress_bz2_file(
@@ -17,11 +22,19 @@ def decompress_bz2_file(
         target_path = source_path.with_suffix("")
 
     target_path = Path(target_path)
-
-    with bz2.open(source_path, "rb") as source:
-        with open(target_path, "wb") as target:
-            shutil.copyfileobj(source, target)
-
+    
+    try:
+        with bz2.open(source_path, "rb") as source:
+            with open(target_path, "wb") as target:
+                shutil.copyfileobj(source, target)
+                
+    except OSError:
+        logger.exception(
+            "Failed to decompress %s", source_path
+        )
+        raise
+        
+    
     return target_path
 
 
@@ -45,14 +58,17 @@ def decompress_bz2_dir(
         target_path = output_dir / target_name
         
         if target_path.exists():
-            logger.info("Skipping existing file: %s", target_name)
+            # logger.info("Skipping existing file: %s", target_name)
             continue
         
+        try:
+            decompress_bz2_file(
+                source_path=source_path, 
+                target_path=target_path
+            )
         
-        decompress_bz2_file(
-            source_path=source_path, 
-            target_path=target_path
-        )
+        except OSError:
+            continue
         
         decompressed_count += 1
 
@@ -62,7 +78,7 @@ def decompress_bz2_dir(
 
 if __name__ == "__main__":
     decompress_bz2_dir(
-        input_dir=ICON_OUTPUT_DIR,
-        output_dir=DECOMPRESSED_DIR
+        input_dir=icon_settings.compressed_dir,
+        output_dir=icon_settings.decompressed_dir
     )
     

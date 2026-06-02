@@ -5,8 +5,11 @@ import requests
 from bs4 import BeautifulSoup, Tag
 import pandas as pd
 
-from configs.jobs_config import ICON_URL, ICON_OUTPUT_DIR
+from configs import settings
 from utils.logger import logger
+
+
+icon_settings = settings.ingestion.icon
 
 
 def get_upload_time(html_tag: Tag) -> pd.Timestamp | None:
@@ -141,8 +144,8 @@ def download_icon_file(
 
 def fetch_icon() -> None:
     
-    df_remote = fetch_icon_metadata(url=ICON_URL)
-    local_times = get_local_forecast_times(directory=ICON_OUTPUT_DIR)
+    df_remote = fetch_icon_metadata(url=icon_settings.url)
+    local_times = get_local_forecast_times(directory=icon_settings.compressed_dir)
 
     df_missing = df_remote[
         ~df_remote["datetime_forecast"].isin(local_times)
@@ -153,9 +156,9 @@ def fetch_icon() -> None:
     for _, row in df_missing.iterrows():
 
         download_icon_file(
-            root_url=ICON_URL,
+            root_url=icon_settings.url,
             file_name=row["filename"],
-            output_dir=ICON_OUTPUT_DIR,
+            output_dir=icon_settings.compressed_dir,
         )
 
 
