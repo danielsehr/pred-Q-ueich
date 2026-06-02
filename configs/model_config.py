@@ -24,7 +24,8 @@ sum_vars = [
 
 # Lags in lag * timestamp (15 min)
 shift_lags = [
-    1, 2, 3, 4, 8, 12, 24, 48, 96
+    1, 2, 3, 4, 8, 12, 24, 48
+   # , 96
     ]
 
 # Delay in lag * timestamp (15 min)
@@ -34,7 +35,8 @@ delays = [
 
 # Lags in lag * timestamp (15 min)
 sum_lags = [
-    1, 2, 3, 4, 8, 12, 24, 48, 96
+    1, 2, 3, 4, 8, 12, 24, 48
+    # , 96
     ]
 
 # Timesteps of inference. 1 -> 15 min
@@ -42,4 +44,5 @@ inference_steps = 1
 
 
 # --- inference.py ---
-MODEL_PATH = Path("models/xgb_model_discharge_precip_MA.json")
+# MODEL_PATH = Path("models/xgb_model_discharge_precip_MA.json")
+MODEL_PATH = Path("models/xgb_model_discharge_precip_hampel_ewm.json")
