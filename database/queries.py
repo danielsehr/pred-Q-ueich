@@ -3,7 +3,8 @@ import pandas as pd
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
-from configs.database_config import QUERY_TIMEDELTA_DAYS
+from configs import settings
+
 from utils.logger import logger
 from database.db import SessionLocal
 from database.models import Discharge, Inference, IconPrecipForecast, RadolanPrecipObservation
@@ -56,7 +57,7 @@ def load_forecast_timeseries(
     ) -> pd.DataFrame:
     
     start = pd.Timestamp.now() - pd.Timedelta(days=days)
-    end = start + pd.Timedelta(days=days)
+    end = pd.Timestamp.now() + pd.Timedelta(days=days)
 
     
     column = getattr(model, value_column)
@@ -89,7 +90,7 @@ def load_forecast_timeseries(
     
 
 def load_discharge_data(
-    days: int = QUERY_TIMEDELTA_DAYS
+    days: int = settings.database.query_timedelta_days
     ) -> pd.DataFrame:
     
     df = load_observation_timeseries(
@@ -103,7 +104,7 @@ def load_discharge_data(
 
 
 def load_inference_data(
-    days: int = QUERY_TIMEDELTA_DAYS
+    days: int = settings.database.query_timedelta_days
     ) -> pd.DataFrame:
     
     df = load_forecast_timeseries(
@@ -117,7 +118,7 @@ def load_inference_data(
     
 
 def load_precip_forecast_data(
-    days: int = QUERY_TIMEDELTA_DAYS
+    days: int = settings.database.query_timedelta_days
     ) -> pd.DataFrame:
     
     df = load_forecast_timeseries(
@@ -131,7 +132,7 @@ def load_precip_forecast_data(
         
 
 def load_precip_observation_data(
-    days: int = QUERY_TIMEDELTA_DAYS
+    days: int = settings.database.query_timedelta_days
     ) -> pd.DataFrame:
     
     df = load_observation_timeseries(
