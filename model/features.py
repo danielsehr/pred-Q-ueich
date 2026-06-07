@@ -1,8 +1,10 @@
 import numpy as np
 import pandas as pd
 
-from configs.model_config import shift_vars, sum_vars, shift_lags, delays, sum_lags, inference_steps
+from configs import settings
 
+
+feature_settings = settings.model.features
 
 
 def add_time_transform(df: pd.DataFrame) -> pd.DataFrame:
@@ -57,8 +59,8 @@ def add_sum_features(
     
     for col in cols:    
         if any(p in col for p in sum_vars):
-            for delay in delays:
-                for window in sum_lags:
+            for delay in feature_settings.delays:
+                for window in feature_settings.sum_lags:
                 
                     new_cols[f"{col}_delay_{delay}_sum_{window}"] = (
                         df[col]
@@ -86,17 +88,17 @@ def create_features(
     df = add_time_transform(df)
     
     # --- Shift lag features    
-    df = add_shift_features(df, cols=cols, lags=shift_lags, lag_vars=shift_vars)
+    df = add_shift_features(df, cols=cols, lags=feature_settings.shift_lags, lag_vars=feature_settings.shift_vars)
     
     # --- Summed lag features ---
-    df = add_sum_features(df, cols=cols, lags=sum_lags, sum_vars=sum_vars)
+    df = add_sum_features(df, cols=cols, lags=feature_settings.sum_lags, sum_vars=feature_settings.sum_vars)
     
     return df
 
 
 def create_training_features(
     df: pd.DataFrame,
-    horizon: int = inference_steps,
+    horizon: int = settings.model.inference.steps,
     ) -> pd.DataFrame:
     
     df = df.copy()
