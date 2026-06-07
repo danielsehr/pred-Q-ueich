@@ -1,27 +1,33 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-from configs.scheduler_config import JOBS
+
+from configs import settings
 from utils.logger import logger
+from scheduler.registry import JOB_REGISTRY
 
 
 def run_initial_ingestion():
-    print("[INIT] Running intial ingestion")
+    logger.info("[INIT] Running initial ingestion")
     
-    for job in JOBS:
-        logger.info("[INIT] %s", job['name'])
-        job["func"]()
+    for job in settings.scheduler.jobs:
+        func = JOB_REGISTRY[job.name]
+        
+        logger.info("[INIT] %s", job.name)
+        func()
 
 
 def start_scheduler():
     scheduler = BlockingScheduler()
-
-    for job in JOBS:
+    
+    for job in settings.scheduler.jobs:
+        func = JOB_REGISTRY[job.name]
+        
         scheduler.add_job(
-            job["func"],
+            func=func,
             trigger="interval",
-            minutes=job["interval_minutes"],
+            minutes=job.interval_minutes,
             max_instances=1,
             coalesce=True,
-            id=job["name"],
+            id=job.name,
         )
 
     logger.info("[SCHEDULER] Running...")
