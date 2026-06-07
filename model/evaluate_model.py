@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from configs import settings
 from database.queries import load_discharge_data
 from model.features import create_training_features
 from model.dataset import TimeSeriesDataset
@@ -9,12 +10,12 @@ from model.evaluation import evaluate_model
 
 # Eval dir
 eval_dir = Path("model/evaluation")
-model_dir = Path("models/xgb_model.json")
+model_dir = Path("models/xgb_model_discharge_precip.json")
 
 # Load data
 df = load_discharge_data()
 
-df = create_training_features(df)
+df = create_training_features(df, horizon=settings.model.inference.steps)
 
 # Create dataset
 dataset = TimeSeriesDataset(df)
