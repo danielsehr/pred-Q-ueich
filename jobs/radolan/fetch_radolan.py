@@ -4,8 +4,11 @@ import requests
 from bs4 import BeautifulSoup, Tag
 import pandas as pd
 
-from configs.jobs_config import RADOLAN_URL, RADOLAN_OUTPUT_DIR, RADOLAN_DECOMPRESSED_DIR
+from configs import settings
 from utils.logger import logger 
+
+
+radolan_settings = settings.ingestion.radolan
 
 
 def get_upload_time(html_tag: Tag) -> pd.Timestamp | None:
@@ -134,8 +137,8 @@ def download_radolan_file(
     
 def fetch_radolan() -> None:
     
-    df_remote = fetch_radolan_metadata(url=RADOLAN_URL)
-    local_times = get_local_observation_date(directory=RADOLAN_OUTPUT_DIR)
+    df_remote = fetch_radolan_metadata(url=radolan_settings.url)
+    local_times = get_local_observation_date(directory=radolan_settings.compressed_dir)
 
     df_missing = df_remote[
         ~df_remote["datetime_observation"].isin(local_times)
@@ -147,9 +150,9 @@ def fetch_radolan() -> None:
     for _, row in df_missing.iterrows():
 
         download_radolan_file(
-            root_url=RADOLAN_URL,
+            root_url=radolan_settings.url,
             file_name=row["filename"],
-            output_dir=RADOLAN_OUTPUT_DIR,
+            output_dir=radolan_settings.compressed_dir,
         )
         
         files += 1
