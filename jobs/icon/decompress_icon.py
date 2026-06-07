@@ -2,9 +2,7 @@ from pathlib import Path
 import shutil
 import bz2
 
-from configs.jobs_config import ICON_OUTPUT_DIR, DECOMPRESSED_DIR
 from configs import settings
-
 from utils.logger import logger
 
 
