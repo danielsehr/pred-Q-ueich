@@ -5,11 +5,14 @@ from sqlalchemy.orm import Session
 from database.db import SessionLocal
 from database.models import RadolanPrecipObservation
 
-from configs.jobs_config import RADOLAN_OUTPUT_DIR, RADOLAN_DECOMPRESSED_DIR, CATCHMENT_PATH
+from configs import settings
 from utils.logger import logger
 from jobs.radolan.fetch_radolan import fetch_radolan
 from jobs.radolan.decompress_radolan import decompress_tar_dir
 from jobs.radolan.process_radolan import build_precip_timeseries
+
+
+radolan_settings = settings.ingestion.radolan
 
 
 def get_latest_timestamp() -> pd.Timestamp | None:
@@ -65,16 +68,16 @@ def main() -> None:
     fetch_radolan()
     
     decompress_tar_dir(
-        input_dir=RADOLAN_OUTPUT_DIR,
-        output_dir=RADOLAN_DECOMPRESSED_DIR,
+        input_dir=radolan_settings.compressed_dir,
+        output_dir=radolan_settings.decompressed_dir,
         days=30
     )
     
     latest_ts = get_latest_timestamp()
     
     df_precip_mean = build_precip_timeseries(
-        input_dir=RADOLAN_DECOMPRESSED_DIR,
-        catchment_path=CATCHMENT_PATH,
+        input_dir=radolan_settings.decompressed_dir,
+        catchment_path=settings.ingestion.catchment.catchment_path,
         start=latest_ts
     )
     
