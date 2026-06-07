@@ -71,7 +71,7 @@ def decompress_tar_dir(
         target_dir = output_dir / target_name
         
         if target_dir.exists():
-            logger.info("Skipping existing file: %s", target_name)
+            # logger.info("Skipping existing file: %s", target_name)
             continue
         
         
