@@ -3,8 +3,11 @@ import shutil
 import tarfile
 import pandas as pd
 
-from configs.jobs_config import RADOLAN_OUTPUT_DIR, RADOLAN_DECOMPRESSED_DIR
+from configs import settings
 from utils.logger import logger
+
+
+radolan_settings = settings.ingestion.radolan
 
 
 def extract_radolan_timestamp(
@@ -84,7 +87,7 @@ def decompress_tar_dir(
 
 if __name__ == "__main__":
     decompress_tar_dir(
-        input_dir=RADOLAN_OUTPUT_DIR,
-        output_dir=RADOLAN_DECOMPRESSED_DIR,
+        input_dir=radolan_settings.compressed_dir,
+        output_dir=radolan_settings.decompressed_dir,
         days=30
     )
