@@ -3,11 +3,12 @@ import pandas as pd
 from xgboost import XGBRegressor
 
 from configs.model_config import MODEL_PATH
+from configs import settings
 
 
 def load_model():
     model = XGBRegressor()
-    model.load_model(MODEL_PATH)
+    model.load_model(fname=settings.model.inference.model_path)
     
     return model
 
