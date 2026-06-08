@@ -21,6 +21,12 @@ class RadolanSettings(BaseModel):
     url: str
     compressed_dir: str
     decompressed_dir: str
+    
+    
+class RadolanHourlySettings(BaseModel):
+    url: str
+    compressed_dir: str
+    decompressed_dir: str
 
 
 class TempStationSettings(BaseModel):
@@ -37,4 +43,5 @@ class IngestionSettings(BaseModel):
     discharge: DischargeSettings
     icon: IconSettings
     radolan: RadolanSettings
+    radolan_hourly: RadolanHourlySettings
     temp: TempStationSettings
