@@ -7,3 +7,6 @@ jobs:
 
   - name: ingest_precip_observation
     interval_minutes: 10
+  
+  - name: ingest_precip_hourly_observation
+    interval_minutes: 10
