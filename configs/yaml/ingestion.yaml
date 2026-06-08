@@ -24,6 +24,12 @@ radolan:
   decompressed_dir: "data/observed_precip/radolan/decompressed"
 
 
+radolan_hourly:
+  url: "https://opendata.dwd.de/climate_environment/CDC/grids_germany/hourly/radolan/recent/bin/"
+  compressed_dir: "data/observed_precip/radolan_10min"
+  decompressed_dir: "data/test/radolan/decompressed"
+
+
 temp:
   url: "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/air_temperature/recent/zehn_min_tu_Beschreibung_Stationen.txt"
   
