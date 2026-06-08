@@ -49,12 +49,12 @@ def write_to_db(df: pd.DataFrame) -> None:
             
         session.commit()
         
-        logger.info("[RADOLAN PRECIP OBSERV] Inserted %s rows.", len(df))
+        logger.info("[RADOLAN PRECIP HOURLY OBSERV] Inserted %s rows.", len(df))
 
     
     except Exception:
         session.rollback()
-        logger.exception("[RADOLAN PRECIP OBSERV] Failed DB ingestion.")
+        logger.exception("[RADOLAN PRECIP HOURLY OBSERV] Failed DB ingestion.")
         raise
     
     
