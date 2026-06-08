@@ -11,6 +11,7 @@ class Discharge(Base):
     discharge = Column(Float, nullable=False)
 
 
+
 class Inference(Base):
     __tablename__ = "inference"
 
@@ -29,6 +30,7 @@ class Inference(Base):
     # model_version = Column(String)
     
 
+
 class IconPrecipForecast(Base):
     __tablename__ = "icon_precip_mean_forecast"
     
@@ -44,6 +46,7 @@ class IconPrecipForecast(Base):
     precip_mean = Column(Float)
 
 
+
 class RadolanPrecipObservation(Base):
     __tablename__ = "radolan_precip_mean_observation"
     
@@ -51,6 +54,22 @@ class RadolanPrecipObservation(Base):
         UniqueConstraint(
             "timestamp",
             name="uq_icon_precip_mean_forecast_timestamp_model",
+        ),
+    )
+    
+    timestamp = Column(DateTime, primary_key=True)
+    
+    precip_mean = Column(Float)
+
+
+
+class RadolanPrecipHourlyObservation(Base):
+    __tablename__ = "radolan_precip_hourly_mean_observation"
+    
+    __table_args__ = (
+        UniqueConstraint(
+            "timestamp",
+            name="uq_icon_precip_hourly_mean_forecast_timestamp_model",
         ),
     )
     
