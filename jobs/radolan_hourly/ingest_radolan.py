@@ -66,7 +66,7 @@ def write_to_db(df: pd.DataFrame) -> None:
 def main() -> None: 
     fetch_radolan()
     
-    latest_ts = get_latest_timestamp() #4:30
+    latest_ts = get_latest_timestamp()
     
     df_precip_mean = build_precip_timeseries(
         input_dir=radolan_settings.compressed_dir,
