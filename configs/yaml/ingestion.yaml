@@ -26,7 +26,7 @@ radolan:
 
 radolan_hourly:
   url: "https://opendata.dwd.de/climate_environment/CDC/grids_germany/hourly/radolan/recent/bin/"
-  compressed_dir: "data/observed_precip/radolan_10min"
+  compressed_dir: "data/observed_precip/radolan_10min/compressed"
   decompressed_dir: "data/test/radolan/decompressed"
 
 
