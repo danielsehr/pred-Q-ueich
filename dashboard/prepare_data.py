@@ -39,7 +39,7 @@ def prepare_datasets(
     discharge = pd.DataFrame(data["discharge"])
     inference = pd.DataFrame(data["inference"])
     precip_obs = pd.DataFrame(data["precip_obs"])
-    precip_hourly_obs = pd.DataFrame(data["precip_obs"])
+    precip_hourly_obs = pd.DataFrame(data["precip_hourly_obs"])
     precip_pred = pd.DataFrame(data["precip_pred"])
     
     datasets = {
