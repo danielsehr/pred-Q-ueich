@@ -7,7 +7,7 @@ from configs import settings
 
 from utils.logger import logger
 from database.db import SessionLocal
-from database.models import Discharge, Inference, IconPrecipForecast, RadolanPrecipObservation
+from database.models import Discharge, Inference, IconPrecipForecast, RadolanPrecipObservation, RadolanPrecipHourlyObservation
 
 
 def load_observation_timeseries(
@@ -137,6 +137,20 @@ def load_precip_observation_data(
     
     df = load_observation_timeseries(
         model=RadolanPrecipObservation, 
+        value_column="precip_mean",
+        output_name="precip_mean",
+        days=days
+    )
+    
+    return df
+
+
+def load_precip_hourly_observation_data(
+    days: int = settings.database.query_timedelta_days
+    ) -> pd.DataFrame:
+    
+    df = load_observation_timeseries(
+        model=RadolanPrecipHourlyObservation, 
         value_column="precip_mean",
         output_name="precip_mean",
         days=days
