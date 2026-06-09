@@ -10,7 +10,7 @@ from configs.model import ModelSettings
 from configs.scheduler import SchedulerSettings
 
 
-CONFIG_DIR = Path("configs") / "yaml"
+CONFIG_DIR = Path("src/configs") / "yaml"
 
 def load_yaml(filename: str) -> dict:
     with open(CONFIG_DIR / filename, "r") as f:
