@@ -57,7 +57,7 @@ def create_dashboard_layout(data: dict):
     )
     
     
-    fig = add_precip_obs_traces(fig=fig, precip_obs=data["precip_obs"])
+    fig = add_precip_obs_traces(fig=fig, precip_obs=data["precip_hourly_obs"])
     
     fig = add_precip_pred_traces(fig=fig, precip_pred=data["precip_pred"])
     
