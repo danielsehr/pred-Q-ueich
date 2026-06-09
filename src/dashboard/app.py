@@ -3,7 +3,7 @@ import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 import plotly.graph_objects as go
 
-from configs import settings
+from src.configs import settings
 
 from src.dashboard.api import fetch_dashboard_data
 from src.dashboard.prepare_data import prepare_datasets
