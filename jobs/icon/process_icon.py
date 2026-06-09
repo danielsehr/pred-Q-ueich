@@ -43,25 +43,34 @@ def clip_to_catchment(
 
 def extract_precip_timeseries(
     precip: xr.DataArray,
-    ) -> pd.DataFrame:
-    
-    rows = []
+) -> pd.DataFrame:
 
-    for i in range(len(precip.step)):
-        
-        precip_step = precip.isel(step=i)
-        
-        forecast_time = pd.to_datetime(precip_step.valid_time.values)
-        precip_cum_mean = float(precip_step.mean(skipna=True))
-        
-        rows.append({
-            "timestamp": forecast_time,
-            "precip_cum_mean": precip_cum_mean
-        })
-        
-    df = pd.DataFrame(rows)
-    df = df.set_index("timestamp")
-    
+    spatial_dims = [
+        d for d in precip.dims
+        if d not in {"step", "time"}
+    ]
+
+    ts = precip.mean(
+        dim=spatial_dims,
+        skipna=True,
+    )
+
+    # Normalize scalar → 1D
+    if ts.ndim == 0:
+        ts = ts.expand_dims(
+            valid_time=[pd.to_datetime(ts.valid_time.values)]
+        )
+
+    df = (
+        ts
+        .to_dataframe(name="precip_cum_mean")
+        .reset_index()
+        .set_index("valid_time")[["precip_cum_mean"]]
+    )
+
+    df.index = pd.to_datetime(df.index)
+    df.index.name = "timestamp"
+
     return df
     
 
