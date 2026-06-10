@@ -1,0 +1,2 @@
+database_url: "sqlite:///data/db/queich.db"
+query_timedelta_days: 30

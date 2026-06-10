@@ -1,0 +1,54 @@
+XGBoost:
+  hparams:
+    n_estimators: 10000
+    max_depth: 6
+    learning_rate: 0.01
+    objective: reg:squarederror
+    random_state: 42
+    early_stopping_rounds: 150
+  
+  
+features:
+  shift_vars:
+    - discharge
+    - precip_mean
+
+  sum_vars:
+    - precip_mean
+
+  shift_lags:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 8
+    - 12
+    - 24
+    - 48
+    # - 96
+
+  delays:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 8
+    - 12
+    - 24
+    - 48
+
+  sum_lags:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 8
+    - 12
+    - 24
+    - 48
+    # - 96
+
+
+inference:
+  steps: 1
+  model_path: src/models/xgb_model_discharge_precip_hampel_ewm.json
