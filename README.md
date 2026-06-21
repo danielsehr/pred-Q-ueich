@@ -9,6 +9,7 @@ This project continuously ingests environmental observations and weather forecas
 
 <br>
 
+
 ## Usage
 
 ### 1.  Open directory
@@ -37,7 +38,7 @@ python -m uvicorn api.main:app --host 0.0.0.0 --port 8000
 uv run streamlit run src/discharge_queich/dashboard/app.py
 ````
 
-<br> <br>
+<br>
 
 
 ### 4. Run scheduler
