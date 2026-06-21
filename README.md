@@ -1,11 +1,11 @@
 ![Status](https://img.shields.io/badge/status-active%20development-orange)
 
 # Pred-Q-ueich
-
+Overview
 
 An end-to-end hydrological forecasting system for predicting river discharge in the Queich catchment.
 
-This project continuously ingests environmental observations and weather forecasts, processes and stores time-series data, performs machine learning inference, and serves results through an API and interactive dashboard.
+This project continuously ingests environmental observations and weather forecast data from DWD, processes and stores time-series data, performs machine learning inference, and serves results through an API and interactive dashboard.
 
 <br>
 
