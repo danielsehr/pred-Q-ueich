@@ -9,12 +9,66 @@ This project continuously ingests environmental observations and weather forecas
 
 <br>
 
+## Project Structure
+```
+.
+├── src/discharge_queich
+│   ├── api/
+│   ├── architecture
+│   ├── configs
+│   ├── dashboard/
+│   ├── database/
+│   ├── jobs/
+│   ├── model/
+│   ├── models/
+│   ├── notebooks/
+│   ├── scheduler/
+│   ├── utils/
+│   └── __init__.py
+│ 
+├── data/
+├── docker-compose.yml
+├── Dockerfile
+├── pyproject.toml
+├── README.md
+└── uv.lock
+```
+
+<br>
 
 ## Usage
 
+### Docker Setup
+Make sure you have installed:
+
+- Docker Desktop (Windows/macOS/Linux)
+- Docker Compose v2+
+
+#### 1. Build Container
+```bash
+docker compose build
+```
+
+#### 2. Start services
+```bash
+docker compose up
+```
+
+#### 3. Open dashboard
+```bash
+http://localhost:8501/
+```
+
+#### 4. Stop all services
+```bash
+docker compose down
+```
+<br>
+
+## Local Developement Setup
 ### 1.  Open directory
 ````bash
-cd PythonProjects/discharge_queich
+cd ./discharge_queich
 ````
 <br>
 
@@ -24,11 +78,6 @@ cd PythonProjects/discharge_queich
 On windows:
 ````bash
 uv run uvicorn discharge_queich.api.main:app --reload --host 127.0.0.1 --port 8000
-````
-
-On raspi:
-````bash
-python -m uvicorn api.main:app --host 0.0.0.0 --port 8000
 ````
 <br>
 
