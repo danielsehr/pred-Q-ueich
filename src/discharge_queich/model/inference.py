@@ -2,7 +2,7 @@ from pathlib import Path
 import pandas as pd
 from xgboost import XGBRegressor
 
-from src.configs import settings
+from discharge_queich.configs import settings
 
 
 def load_model():
