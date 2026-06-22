@@ -51,4 +51,7 @@ features:
 
 inference:
   steps: 1
-  model_path: src/models/xgb_model_discharge_precip_hampel_ewm.json
+  # model_path: "./models/xgb_model_discharge_precip_hampel_ewm.json"
+  model_path: "src/discharge_queich/models/xgb_model_discharge_precip_hampel_ewm.json"
+  
+  
