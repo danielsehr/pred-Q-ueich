@@ -2,22 +2,34 @@ services:
   
   api:
     build: .
-    command: python -m uvicorn src.api.main:app --reload --host 127.0.0.1 --port 8000
-    # command: python -m uvicorn api.main:app --host 0.0.0.0 --port 8000
+    working_dir: /app
+    # command: uvicorn discharge_queich.api.main:app --reload --host 127.0.0.1 --port 8000
+    command: uvicorn src.discharge_queich.api.main:app --reload --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
     restart: unless-stopped
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
 
 
   dashboard:
     build: .
-    command: python -m streamlit run src/dashboard/app.py
+    working_dir: /app
+    command: streamlit run src/discharge_queich/dashboard/app.py --server.address 0.0.0.0 --server.port 8501
     ports:
       - "8501:8501"
     restart: unless-stopped
-  
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+
 
   scheduler:
     build: .
-    command: python -m src.scheduler.scheduler
+    working_dir: /app
+    command: python -m discharge_queich.scheduler.scheduler
     restart: unless-stopped
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
