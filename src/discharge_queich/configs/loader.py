@@ -10,7 +10,7 @@ from discharge_queich.configs.model import ModelSettings
 from discharge_queich.configs.scheduler import SchedulerSettings
 
 
-CONFIG_DIR = Path("src/configs") / "yaml"
+CONFIG_DIR = Path(__file__).parent / "yaml"
 
 def load_yaml(filename: str) -> dict:
     with open(CONFIG_DIR / filename, "r") as f:
