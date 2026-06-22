@@ -66,15 +66,16 @@ docker compose down
 ```
 <br>
 
-## Local Developement Setup
-### 1.  Open directory
+### Local Developement Setup
+
+#### 1.  Open directory
 ````bash
 cd ./discharge_queich
 ````
 <br>
 
 
-### 2. Start uvicorn server
+#### 2. Start uvicorn server
 
 On windows:
 ````bash
@@ -83,7 +84,7 @@ uv run uvicorn discharge_queich.api.main:app --reload --host 127.0.0.1 --port 80
 <br>
 
 
-### 3. Run streamlit
+#### 3. Run streamlit
 ````bash
 uv run streamlit run src/discharge_queich/dashboard/app.py
 ````
@@ -91,7 +92,7 @@ uv run streamlit run src/discharge_queich/dashboard/app.py
 <br>
 
 
-### 4. Run scheduler
+#### 4. Run scheduler
 ````bash
 python -m scheduler.scheduler
 ````
