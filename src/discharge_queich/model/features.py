@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from src.configs import settings
+from discharge_queich.configs import settings
 
 
 feature_settings = settings.model.features
