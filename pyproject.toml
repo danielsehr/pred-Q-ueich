@@ -31,6 +31,8 @@ dependencies = [
     "wradlib==2.8.0",
     "xarray==2025.6.1",
     "xgboost==3.2.0",
+    "cfgrib==0.9.15.1",
+    "eccodes==2.47.0",
 ]
 
 
