@@ -93,7 +93,11 @@ def build_precip_timeseries(
         ds = None
         
         try:
-            ds = xr.open_dataset(file, engine="cfgrib")
+            ds = xr.open_dataset(
+                file, 
+                engine="cfgrib",
+                backend_kwargs={"indexpath": ""},
+                )
 
             precip_crop = clip_to_catchment(
                 dataset=ds,
