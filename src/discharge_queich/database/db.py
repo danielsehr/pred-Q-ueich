@@ -1,22 +1,14 @@
 from pathlib import Path
 
-from src.configs import settings
+from discharge_queich.configs import settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# BASE_DIR = Path(__file__).resolve().parent.parent
 
-# DATABASE_PATH = BASE_DIR / "queich.db"
-
-# DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
-
-
-
-# Database driver / connection manager -> communcation interface to the DB
-# "connect python to SQLite"
+# Create engine
 engine = create_engine(url=settings.database.database_url)
 
-# Create session with engine
+# Create session
 SessionLocal = sessionmaker(bind=engine)
 
 # Base class for all DB models -> master blueprint for tables
