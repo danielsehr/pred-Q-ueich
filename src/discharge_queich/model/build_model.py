@@ -1,4 +1,4 @@
-from src.configs import settings
+from discharge_queich.configs import settings
 from xgboost import XGBRegressor
 
 hparams = settings.model.xgboost
