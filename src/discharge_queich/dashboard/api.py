@@ -1,7 +1,7 @@
 import requests
 import streamlit as st
 
-from src.configs import settings
+from discharge_queich.configs import settings
 
 
 @st.cache_data(ttl=600)
