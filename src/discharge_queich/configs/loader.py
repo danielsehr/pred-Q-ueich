@@ -3,6 +3,7 @@ from pathlib import Path
 import yaml
 
 from discharge_queich.configs.settings import Settings
+from discharge_queich.utils.logger import logger
 
 
 CONFIG_DIR = Path(__file__).parent / "yaml"
@@ -23,12 +24,17 @@ def load_settings() -> Settings:
         "scheduler": load_yaml("scheduler.yaml"),
     }
     
-    yaml_config["dashboard"]["api_url"] = (
-    os.getenv(
-        key="DASHBOARD__API_URL",
-        default=yaml_config["dashboard"]["api_url"]
+    try:
+        yaml_config["dashboard"]["api_url"] = (
+        os.getenv(
+            key="DASHBOARD__API_URL",
+            default=yaml_config["dashboard"]["api_url"]
+            )
         )
-    )
+    except Exception as e:
+        logger.exception("Error in loading env config variables: %s", e)
+        raise
+    
 
     # return Settings.model_validate(yaml_config)
     return Settings(**yaml_config)
