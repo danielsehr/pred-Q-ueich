@@ -30,7 +30,7 @@ class RadolanHourlySettings(BaseModel):
 
 
 class TempStationSettings(BaseModel):
-    url: str
+    stations_url: str
     stations_col_names: list[str]
     crs_4326: str
     crs_25832: str
