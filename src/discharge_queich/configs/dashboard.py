@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic_settings import BaseSettings
 
 
-class DashboardSettings(BaseModel):
+class DashboardSettings(BaseSettings):
     api_url: str
     refresh_interval: int
     default_dashboard_days: int
