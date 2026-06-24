@@ -8,9 +8,6 @@ import contextily as ctx
 
 from typing import Literal
 
-# from configs.jobs_config import (
-#     UTM32N_CRS, WGS84_CRS, TEMP_STATIONS_URL, STATIONS_COL_NAMES, CATCHMENT_PATH, BUFFER_SIZE, STATIONS_WRITE_PATH
-#     )
 from discharge_queich.configs import settings
 from discharge_queich.utils.logger import logger
 
@@ -117,7 +114,7 @@ def plot_stations(
     
 def main() -> None:
     gdf_stations = read_stations_txt(
-        url=temp_settings.url, 
+        url=temp_settings.stations_url, 
         colnames=temp_settings.stations_col_names, 
         crs=temp_settings.crs_4326
     )
