@@ -1,11 +1,10 @@
-XGBoost:
-  hparams:
-    n_estimators: 10000
-    max_depth: 6
-    learning_rate: 0.01
-    objective: reg:squarederror
-    random_state: 42
-    early_stopping_rounds: 150
+xgboost:
+  n_estimators: 10000
+  max_depth: 6
+  learning_rate: 0.01
+  objective: reg:squarederror
+  random_state: 42
+  early_stopping_rounds: 150
   
   
 features:
