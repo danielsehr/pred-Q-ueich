@@ -32,7 +32,7 @@ radolan_hourly:
 
 
 temp:
-  url: "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/air_temperature/recent/zehn_min_tu_Beschreibung_Stationen.txt"
+  stations_url: "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/air_temperature/recent/zehn_min_tu_Beschreibung_Stationen.txt"
   
   stations_col_names:
   - stations_id
