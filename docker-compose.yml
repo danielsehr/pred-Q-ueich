@@ -22,7 +22,8 @@ services:
     volumes:
       - ./src:/app/src
       - ./data:/app/data
-
+    environment:
+      DASHBOARD__API_URL: http://api:8000/forecast
 
   scheduler:
     build: .
