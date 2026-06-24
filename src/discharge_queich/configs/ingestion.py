@@ -1,35 +1,35 @@
-from pydantic import BaseModel
+from pydantic_settings import BaseSettings
 
 
-class CatchmentSettings(BaseModel):
+class CatchmentSettings(BaseSettings):
     catchment_path: str
     
 
-class DischargeSettings(BaseModel):
+class DischargeSettings(BaseSettings):
     url: str
     headers: dict[str, str]
 
 
-class IconSettings(BaseModel):
+class IconSettings(BaseSettings):
     url: str
     compressed_dir: str
     decompressed_dir: str
     clip_crs: str
 
 
-class RadolanSettings(BaseModel):
+class RadolanSettings(BaseSettings):
     url: str
     compressed_dir: str
     decompressed_dir: str
     
     
-class RadolanHourlySettings(BaseModel):
+class RadolanHourlySettings(BaseSettings):
     url: str
     compressed_dir: str
     decompressed_dir: str
 
 
-class TempStationSettings(BaseModel):
+class TempStationSettings(BaseSettings):
     url: str
     stations_col_names: list[str]
     crs_4326: str
@@ -38,7 +38,7 @@ class TempStationSettings(BaseModel):
     stations_write_path: str
     
     
-class IngestionSettings(BaseModel):
+class IngestionSettings(BaseSettings):
     catchment: CatchmentSettings
     discharge: DischargeSettings
     icon: IconSettings

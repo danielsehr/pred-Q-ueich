@@ -1,11 +1,10 @@
-from pydantic import BaseModel
+from pydantic_settings import BaseSettings
 
 
-# --- Scheduler ----
-class JobConfig(BaseModel):
+class JobConfig(BaseSettings):
     name: str
     interval_minutes: int
 
 
-class SchedulerSettings(BaseModel):
+class SchedulerSettings(BaseSettings):
     jobs: list[JobConfig]

@@ -1,11 +1,9 @@
 from pathlib import Path
-from pydantic import BaseModel
-
-
+from pydantic_settings import BaseSettings
 
 
 # --- Model ---
-class XGBoostSettings(BaseModel):
+class XGBoostSettings(BaseSettings):
     n_estimators: int = 10_000
     max_depth: int = 6
     learning_rate: float = 0.01
@@ -14,7 +12,7 @@ class XGBoostSettings(BaseModel):
     early_stopping_rounds: int = 150
     
     
-class FeatureEngineeringSettings(BaseModel):
+class FeatureEngineeringSettings(BaseSettings):
     shift_vars: list[str] = [
         "discharge",
         "precip_mean",
@@ -37,15 +35,14 @@ class FeatureEngineeringSettings(BaseModel):
     ]
 
 
-class InferenceSettings(BaseModel):
+class InferenceSettings(BaseSettings):
     steps: int = 1
     model_path: Path = Path(
         "models/xgb_model_discharge_precip_hampel_ewm.json"
     )
 
 
-class ModelSettings(BaseModel):
+class ModelSettings(BaseSettings):
     xgboost: XGBoostSettings = XGBoostSettings()
     features: FeatureEngineeringSettings = FeatureEngineeringSettings()
     inference: InferenceSettings = InferenceSettings()
-

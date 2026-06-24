@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from pydantic_settings import BaseSettings
 
 
-class DatabaseSettings(BaseModel):
+class DatabaseSettings(BaseSettings):
     database_url: str
     query_timedelta_days: int
