@@ -15,6 +15,9 @@ from discharge_queich.configs import settings
 from discharge_queich.utils.logger import logger
 
 
+temp_settings = settings.ingestion.temp
+
+
 def read_stations_txt(
     url: str | Path,
     colnames: list[str],
@@ -73,14 +76,21 @@ def write_stations_to_py(
     
     stations_id = stations["stations_id"].astype(str).str.zfill(5)
     
-    try:
-        with open(file_path, 'w') as f:
-            f.write(f"STATIONS = {list(stations_id)}")
-            logger.info("Wrote %s stations in file", len(stations_id))
+    
+    if file_path.exists() and file_path.stat().st_size > 0:
+        logger.info("station.py already written")
+    
+    else:
+        try:
+            with open(file_path, 'w+') as f:
+                f.write(f"STATIONS = {list(stations_id)}")
+                logger.info("Wrote %s stations in file", len(stations_id))
+            
+        except Exception:
+            logger.exception("Failed to write stations config py")
+    
         
-    except Exception:
-        logger.exception("Failed to write stations config py")
-
+        
 
 def plot_stations(
     stations: gpd.GeoDataFrame,
@@ -107,22 +117,22 @@ def plot_stations(
     
 def main() -> None:
     gdf_stations = read_stations_txt(
-    url=TEMP_STATIONS_URL, 
-    colnames=STATIONS_COL_NAMES, 
-    crs=WGS84_CRS
+        url=temp_settings.url, 
+        colnames=temp_settings.stations_col_names, 
+        crs=temp_settings.crs_4326
     )
 
-    catchment = gpd.read_file(CATCHMENT_PATH)
+    catchment = gpd.read_file(settings.ingestion.catchment.catchment_path)
 
     gdf_stations_intersect = extract_watershed_stations(
         stations=gdf_stations,
         catchment=catchment,
-        utm_crs=UTM32N_CRS,
-        buffer_size=BUFFER_SIZE,
+        utm_crs=temp_settings.crs_25832,
+        buffer_size=temp_settings.buffer_size,
         )
     
     write_stations_to_py(
-        file_path=STATIONS_WRITE_PATH,
+        file_path=temp_settings.stations_write_path,
         stations=gdf_stations_intersect
         )
         
