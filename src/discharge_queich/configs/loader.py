@@ -1,6 +1,6 @@
+import os
 from pathlib import Path
 import yaml
-import os
 
 from discharge_queich.configs.settings import Settings
 
