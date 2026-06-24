@@ -21,5 +21,3 @@ def fetch_dashboard_data() -> dict:
     except requests.RequestException as e:
         st.error(f"API unavailable: {e}")
         st.stop()
-        
-    
