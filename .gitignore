@@ -7,3 +7,4 @@ evaluation/
 *.db
 *.csv
 */README.md
+*.egg-info/
