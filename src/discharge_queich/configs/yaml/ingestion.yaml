@@ -33,7 +33,7 @@ radolan_hourly:
 
 temp:
   stations_url: "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/air_temperature/recent/zehn_min_tu_Beschreibung_Stationen.txt"
-  
+
   stations_col_names:
   - stations_id
   - start_date
@@ -50,3 +50,13 @@ temp:
   buffer_size: 20_000
   stations_write_path: "src/discharge_queich/jobs/temp/stations.py"
   
+  url: "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/air_temperature/now/"
+  compressed_dir: "data/observed_temp/compressed"
+
+  cols_to_keep:
+  - MESS_DATUM
+  - TT_10
+
+  cols_rename:
+  - timestamp
+  - temp
