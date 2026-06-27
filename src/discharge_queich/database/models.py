@@ -79,3 +79,12 @@ class TempStationFileState(Base):
     etag: Mapped[str] = mapped_column(String)
     
     last_modified: Mapped[datetime] = mapped_column(DateTime)
+    
+    
+
+class TempStationObservation(Base):
+    __tablename__ = "temp_station_observation"
+    
+    timestamp: Mapped[datetime] = mapped_column(DateTime, primary_key=True)
+    
+    temp_mean: Mapped[float] = mapped_column(Float)
