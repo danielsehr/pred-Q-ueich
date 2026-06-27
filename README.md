@@ -94,7 +94,7 @@ uv run streamlit run src/discharge_queich/dashboard/app.py
 
 #### 4. Run scheduler
 ````bash
-python -m scheduler.scheduler
+uv run python -m  src.discharge_queich.scheduler.scheduler
 ````
 
 <br> <br>
