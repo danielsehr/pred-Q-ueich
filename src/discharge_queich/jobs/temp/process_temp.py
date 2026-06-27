@@ -50,7 +50,8 @@ def resample_temp(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_mean_temp_timeseries(
-    compressed_dir: str | Path = temp_settings.compressed_dir
+    compressed_dir: str | Path = temp_settings.compressed_dir,
+    start: pd.Timestamp | None = None
     ) -> pd.DataFrame:
     
     zip_files = [p for p in Path(compressed_dir).rglob("*.zip")]
@@ -82,10 +83,13 @@ def build_mean_temp_timeseries(
         ).mean(axis=1).to_frame("temp_mean")
 
     df = (
-        df
+            df
             .mean(axis=1)
             .to_frame("temp_mean")
-            )
+        )
+    
+    if start is not None:
+        df = df[df.index >= start]
 
         
     return df
