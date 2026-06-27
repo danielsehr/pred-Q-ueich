@@ -1,4 +1,7 @@
 from sqlalchemy import Column, Float, String, DateTime, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
+from pandas import Timestamp
+from datetime import datetime
 
 from discharge_queich.database.db import Base
 
@@ -77,3 +80,32 @@ class RadolanPrecipHourlyObservation(Base):
     timestamp = Column(DateTime, primary_key=True)
     
     precip_mean = Column(Float)
+    
+    
+
+class TempStationFileState(Base):
+    __tablename__ = "temp_station_file_state"
+    
+    __table_args__ = (
+        UniqueConstraint(
+            "station_id",
+            "timestamp",
+            "etag",
+            name="uq_temp_station_file_state",
+        ),
+    )
+    
+    station_id: Mapped[str] = mapped_column(
+        String,
+        primary_key=True,
+        nullable=False
+        )
+    
+    timestamp: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=False
+        )
+    
+    etag: Mapped[str] = mapped_column(String)
+    
+    last_modified: Mapped[datetime] = mapped_column(DateTime)
