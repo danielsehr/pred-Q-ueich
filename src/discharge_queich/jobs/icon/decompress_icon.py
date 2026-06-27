@@ -46,12 +46,12 @@ def decompress_bz2_dir(
     
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    file_paths = [p for p in input_dir.rglob("*.grib2.bz2")]
+    # file_paths = [p for p in input_dir.rglob("*.grib2.bz2")]
 
 
     decompressed_count = 0
     
-    for source_path in file_paths:
+    for source_path in input_dir.rglob("*.grib2.bz2"):
         target_name = source_path.stem
         target_path = output_dir / target_name
         
