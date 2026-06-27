@@ -37,6 +37,11 @@ class TempStationSettings(BaseModel):
     buffer_size: int
     stations_write_path: str
     
+    url: str
+    compressed_dir: str
+    cols_to_keep: list[str]
+    cols_rename: list[str]
+    
     
 class IngestionSettings(BaseModel):
     catchment: CatchmentSettings
