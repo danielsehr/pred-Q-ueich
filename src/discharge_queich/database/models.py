@@ -6,30 +6,21 @@ from datetime import datetime
 from discharge_queich.database.db import Base
 
 
-# Create a DB tables
 class Discharge(Base):
     __tablename__ = "discharge"
 
-    timestamp = Column(DateTime, primary_key=True)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, primary_key=True)
 
-    discharge = Column(Float, nullable=False)
+    discharge: Mapped[float] = mapped_column(Float)
 
 
 
 class Inference(Base):
     __tablename__ = "inference"
 
-    __table_args__ = (
-        UniqueConstraint(
-            "timestamp",
-            # "model_version",
-            name="uq_inference_timestamp_model",
-        ),
-    )
+    timestamp: Mapped[datetime] = mapped_column(DateTime, primary_key=True)
 
-    timestamp = Column(DateTime, primary_key=True)
-
-    predicted = Column(Float)
+    predicted: Mapped[float] = mapped_column(Float)
     
     # model_version = Column(String)
     
@@ -37,49 +28,28 @@ class Inference(Base):
 
 class IconPrecipForecast(Base):
     __tablename__ = "icon_precip_mean_forecast"
+        
+    timestamp: Mapped[datetime] = mapped_column(DateTime, primary_key=True)
     
-    __table_args__ = (
-        UniqueConstraint(
-            "timestamp",
-            name="uq_icon_precip_mean_forecast_timestamp_model",
-        ),
-    )
-    
-    timestamp = Column(DateTime, primary_key=True)
-    
-    precip_mean = Column(Float)
+    precip_mean: Mapped[float] = mapped_column(Float)
 
 
 
 class RadolanPrecipObservation(Base):
     __tablename__ = "radolan_precip_mean_observation"
     
-    __table_args__ = (
-        UniqueConstraint(
-            "timestamp",
-            name="uq_icon_precip_mean_forecast_timestamp_model",
-        ),
-    )
+    timestamp: Mapped[datetime] = mapped_column(DateTime, primary_key=True)
     
-    timestamp = Column(DateTime, primary_key=True)
-    
-    precip_mean = Column(Float)
+    precip_mean: Mapped[float] = mapped_column(Float)
 
 
 
 class RadolanPrecipHourlyObservation(Base):
     __tablename__ = "radolan_precip_hourly_mean_observation"
     
-    __table_args__ = (
-        UniqueConstraint(
-            "timestamp",
-            name="uq_icon_precip_hourly_mean_forecast_timestamp_model",
-        ),
-    )
+    timestamp: Mapped[datetime] = mapped_column(DateTime, primary_key=True)
     
-    timestamp = Column(DateTime, primary_key=True)
-    
-    precip_mean = Column(Float)
+    precip_mean: Mapped[float] = mapped_column(Float)
     
     
 
