@@ -7,7 +7,12 @@ from discharge_queich.configs import settings
 
 from discharge_queich.utils.logger import logger
 from discharge_queich.database.db import SessionLocal
-from discharge_queich.database.models import Discharge, Inference, IconPrecipForecast, RadolanPrecipObservation, RadolanPrecipHourlyObservation
+
+from discharge_queich.database.models import (
+    Discharge, Inference, IconPrecipForecast, 
+    RadolanPrecipObservation, RadolanPrecipHourlyObservation,
+    TempStationObservation
+    )
 
 
 def load_observation_timeseries(
@@ -153,6 +158,20 @@ def load_precip_hourly_observation_data(
         model=RadolanPrecipHourlyObservation, 
         value_column="precip_mean",
         output_name="precip_mean",
+        days=days
+    )
+    
+    return df
+
+
+def load_temp_observation_data(
+    days: int = settings.database.query_timedelta_days
+    ) -> pd.DataFrame:
+    
+    df = load_observation_timeseries(
+        model=TempStationObservation,
+        value_column="temp_mean",
+        output_name="temp_mean",
         days=days
     )
     
