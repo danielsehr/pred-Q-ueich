@@ -37,6 +37,8 @@ def build_temp_timeseries(
     df = df.set_index(keys="timestamp")
     df = df.sort_index()
     
+    df = df.mask(df < -50)
+    
     return df
 
     
@@ -44,7 +46,10 @@ def resample_temp(df: pd.DataFrame) -> pd.DataFrame:
     
     df_10min = df.copy()
 
-    df_15min = df_10min.resample("15min").interpolate(method="time")
+    df_15min = (
+        df_10min.resample("15min")
+                .interpolate(method="time")
+        )
     
     return df_15min
 
