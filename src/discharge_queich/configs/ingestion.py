@@ -42,6 +42,13 @@ class TempStationSettings(BaseModel):
     cols_to_keep: list[str]
     cols_rename: list[str]
     
+
+class TempRecentStationSettings(BaseModel):
+    url: str
+    compressed_dir: str
+    cols_to_keep: list[str]
+    cols_rename: list[str] 
+    
     
 class IngestionSettings(BaseModel):
     catchment: CatchmentSettings
@@ -50,3 +57,4 @@ class IngestionSettings(BaseModel):
     radolan: RadolanSettings
     radolan_hourly: RadolanHourlySettings
     temp: TempStationSettings
+    temp_recent: TempRecentStationSettings

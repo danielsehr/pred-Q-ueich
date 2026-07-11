@@ -60,3 +60,16 @@ temp:
   cols_rename:
   - timestamp
   - temp
+
+
+temp_recent:
+  url: "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/air_temperature/recent/"
+  compressed_dir: "data/observed_temp/recent"
+
+  cols_to_keep:
+  - MESS_DATUM
+  - TT_10
+
+  cols_rename:
+  - timestamp
+  - temp
