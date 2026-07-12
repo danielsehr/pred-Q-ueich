@@ -10,8 +10,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from discharge_queich.database.db import SessionLocal
 from discharge_queich.database.models import TempStationObservation
-from discharge_queich.jobs.temp.fetch_temp import fetch_temp
-from discharge_queich.jobs.temp.process_temp import build_mean_temp_timeseries
+from discharge_queich.jobs.temp.now.fetch_temp import fetch_temp
+from discharge_queich.jobs.temp.now.process_temp import build_mean_temp_timeseries
 
 
 temp_settings = settings.ingestion.temp
