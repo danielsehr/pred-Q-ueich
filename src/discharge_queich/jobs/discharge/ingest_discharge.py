@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import pandas as pd
 
 from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import Session
@@ -28,7 +29,7 @@ class IngestionResult:
         return self.inserted > 0
             
 
-def write_to_db(df) -> IngestionResult:
+def write_to_db(df: pd.DataFrame | pd.Series) -> IngestionResult:
 
     with SessionLocal() as session:
         try:
