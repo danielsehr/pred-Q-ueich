@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+
+from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import Session
 
 from discharge_queich.database.db import SessionLocal
@@ -16,55 +19,63 @@ def get_last_timestamp(session: Session):
     return result[0] if result else None
 
 
-def write_to_db(df) -> bool:
-    session: Session = SessionLocal()
+@dataclass
+class IngestionResult:
+    inserted: int = 0
 
-    try:
-        last_timestamp = get_last_timestamp(session)
-        
-        if last_timestamp is not None:
-            df = df[df.index > last_timestamp]
-        
-        if df.empty:
-            logger.info("No new data.")
+    @property
+    def changed(self) -> bool:
+        return self.inserted > 0
             
-            return False
 
+def write_to_db(df) -> IngestionResult:
 
-        entries = [
-            Discharge(
-                timestamp=timestamp,
-                discharge=row["discharge"],
+    with SessionLocal() as session:
+        try:
+            last_timestamp = get_last_timestamp(session)
+            
+            if last_timestamp is not None:
+                df = df[df.index > last_timestamp]
+            
+            if df.empty:
+                logger.info("[DISCHARGE] No new data.")
+                return IngestionResult()
+
+            
+            records = (
+                df.reset_index()
+                .rename(columns={"index": "timestamp"})
+                .to_dict(orient="records")
             )
-            for timestamp, row in df.iterrows()
-        ]
-
-        session.add_all(entries)
-        session.commit()
+            
+            
+            stmt = insert(Discharge).values(records)
+            
+            stmt = stmt.on_conflict_do_update(
+                index_elements=[Discharge.timestamp],
+                set_= {
+                    Discharge.timestamp: stmt.excluded.discharge
+                }
+            )
+            
+            session.execute(stmt)
+            session.commit()
         
-        logger.info("[DISCHARGE] Inserted %s rows.", len(df))
+            logger.info("[DISCHARGE] Inserted %s rows.", len(records))
 
-        return True
+            return IngestionResult(inserted=len(records))
         
         
-    except Exception:
-        session.rollback()
-        logger.exception("[DISCHARGE] Failed DB ingestion.")
-        return False
+        except Exception:
+            session.rollback()
+            logger.exception("[DISCHARGE] Failed DB ingestion.")
+            raise
 
+        
 
-    finally:
-        session.close()
-
-
-
-def main() -> bool:
+def ingest_discharge() -> IngestionResult:
     df = fetch_discharge()
     
-    inserted = write_to_db(df)
+    ingestion_result = write_to_db(df)
     
-    return inserted
-
-
-if __name__ == "__main__":
-    main()
+    return ingestion_result
