@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from tqdm import tqdm
 from pathlib import Path
 from urllib.parse import urljoin
@@ -84,6 +86,7 @@ def fetch_icon_metadata(url: str | Path) -> pd.DataFrame:
                 "filename": href,
                 "datetime_forecast": forecast_time,
                 "datetime_upload": upload_time,
+                "url": url,
             })
 
         
@@ -108,17 +111,81 @@ def get_local_forecast_times(directory: str | Path) -> set:
     return forecast_times
     
     
+def check_missing_grib_files(
+    df: pd.DataFrame,
+    local_times: set
+    ) -> pd.DataFrame:
+    
+    df_missing = df[
+        ~df["datetime_forecast"].isin(local_times)
+    ]
+    
+    return df_missing
+
+
+
+@dataclass(slots=True)
+class IconDownloadFiles:
+    run: str
+    url: str
+    output_dir: str | Path
+    remote_metadata: pd.DataFrame | None
+    local_times: set | None
+    missing_files: pd.DataFrame| None
+    filename: pd.DataFrame | pd.Series | None
+
+
+def build_icon_download_dataclass() -> list[IconDownloadFiles]:
+    runs = [
+        IconDownloadFiles(
+            run=Path(url).parent.stem,
+            url=url,
+            output_dir=directory,
+            remote_metadata=None,
+            local_times=None,
+            missing_files=None,
+            filename=None
+        ) 
+        for url, directory in zip(
+            icon_settings.urls,
+            icon_settings.compressed_dirs,
+            strict=True,
+        )
+    ]
+    
+    for run in runs:
+        run.remote_metadata = fetch_icon_metadata(url=run.url)
+        
+        run.local_times = get_local_forecast_times(directory=run.output_dir)
+        
+        run.missing_files = check_missing_grib_files(
+            df=run.remote_metadata,
+            local_times=run.local_times
+        )
+        
+        run.filename = run.missing_files["filename"]
+        
+        if (len(run.missing_files) != 0):
+            logger.info("[RADOLAN PRECIP HOURLY OBSERV] Found %s new files for run %s.", len(run.missing_files), run.run)
+    
+    return runs
+    
+
 def download_icon_file(
     root_url: str,
     file_name: str,
-    output_dir: str
-    ) -> None:
+    output_dir: str | Path
+    ) -> bool:
     
     file_url = urljoin(root_url, file_name)
 
     output_path = Path(output_dir) / file_name
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
+    if output_path.exists():
+        return False
+
+
     try:
         logger.info("Downloading %s", file_name)    
         
@@ -132,6 +199,8 @@ def download_icon_file(
         
         logger.info("Saved file to %s", output_path)
         
+        return True        
+        
         
     except requests.RequestException:
         logger.exception("Failed downloading file: %s", file_url)
@@ -142,22 +211,29 @@ def download_icon_file(
         raise
 
 
+def download_all_icon_files(
+    icon_files: list[IconDownloadFiles]
+    ) -> None:
+    
+    downloads = 0
+    
+    for file in icon_files:
+        if file.filename is not None:
+            for name in file.filename :
+                
+                downloaded = download_icon_file(
+                    root_url=file.url,
+                    file_name=str(name),
+                    output_dir=file.output_dir
+                )
+                
+                if downloaded:
+                    downloads += 1
+                
+    logger.info("Downloaded %s new files", downloads)
+
 
 def fetch_icon() -> None:
-    
-    df_remote = fetch_icon_metadata(url=icon_settings.url)
-    local_times = get_local_forecast_times(directory=icon_settings.compressed_dir)
+    runs = build_icon_download_dataclass()
 
-    df_missing = df_remote[
-        ~df_remote["datetime_forecast"].isin(local_times)
-    ]
-
-    logger.info("Found %s new forecast files", len(df_missing))
-    
-    for _, row in df_missing.iterrows():
-
-        download_icon_file(
-            root_url=icon_settings.url,
-            file_name=row["filename"],
-            output_dir=icon_settings.compressed_dir,
-        )
+    download_all_icon_files(icon_files=runs)
