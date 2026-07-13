@@ -1,6 +1,8 @@
+from dataclasses import dataclass
 import pandas as pd
 
 from sqlalchemy import select
+from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import Session
 
 from discharge_queich.configs import settings
@@ -19,63 +21,84 @@ catchment_settings = settings.ingestion.catchment
 
 
 def get_latest_timestamp() -> pd.Timestamp | None:
-    session = SessionLocal()
     
-    try:
-        statement = (
-            select(IconPrecipForecast.timestamp)
-            .order_by(IconPrecipForecast.timestamp.desc())
-            .limit(1)
-        )
-        
-        latest = session.scalar(statement=statement)
-        
-        return pd.Timestamp(latest) if latest is not None else None
-    
-    
-    finally:
-        session.close()
-
-
-def write_to_db(df: pd.DataFrame) -> None:
-    session: Session = SessionLocal()
-    
-    try:
-        for timestamp, row in df.iterrows():
-            
-            entry = IconPrecipForecast(
-                timestamp=timestamp,
-                precip_mean=row["precip_mean"]
+    with SessionLocal() as session:
+        try:
+            stmt = (
+                select(IconPrecipForecast.timestamp)
+                .order_by(IconPrecipForecast.timestamp.desc())
+                .limit(1)
             )
             
-            session.merge(entry)
-        
-        session.commit()
-        
-        logger.info("[ICON PRECIP FORECAST] Inserted %s rows.", len(df))
-        
-        
-    except Exception:
-        session.rollback()
-        logger.exception("[ICON PRECIP FORECAST] Failed DB ingestion.")
-        raise
+            latest = session.scalar(statement=stmt)
+            
+            return pd.Timestamp(latest) if latest is not None else None
+
+
+        except Exception:
+            session.rollback()
+            raise
+
+
+@dataclass
+class IngestionResult:
+    inserted: int = 0
+
+    @property
+    def changed(self) -> bool:
+        return self.inserted > 0
+
+
+def write_to_db(df: pd.DataFrame) -> IngestionResult:
+    with SessionLocal() as session:
     
-    
-    finally:
-        session.close()
+        try:
+            if df.empty:
+                logger.info("[ICON PRECIP FORECAST] No new data.")
+                return IngestionResult()
+            
+            
+            records = (
+                df.reset_index()
+                .rename(columns={"index": "timestamp"})
+                .to_dict(orient="records")
+            )
+            
+            
+            stmt = insert(IconPrecipForecast).values(records)
+            
+            stmt = stmt.on_conflict_do_update(
+                index_elements=[IconPrecipForecast.timestamp],
+                set_= {
+                    IconPrecipForecast.timestamp: stmt.excluded.precip_mean
+                }
+            )
+            
+            session.execute(stmt)
+            session.commit()
+            
+            logger.info("[ICON PRECIP FORECAST] Inserted %s rows.", len(records))
+            
+            return IngestionResult(inserted=len(records))
+        
+            
+        except Exception:
+            session.rollback()
+            logger.exception("[ICON PRECIP FORECAST] Failed DB ingestion.")
+            raise
         
         
 
-def main() -> None:
+def ingest_icon() -> IngestionResult:
     fetch_icon()
     
     decompress_bz2_dir(
         input_dir=icon_settings.compressed_dir,
-        output_dir=icon_settings.compressed_dir
+        output_dir=icon_settings.decompressed_dir
     )
     
     df_precip_mean = build_precip_timeseries(
-        input_dir=icon_settings.compressed_dir,
+        input_dir=icon_settings.decompressed_dir,
         catchment_path=catchment_settings.catchment_path,
         clip_crs=icon_settings.clip_crs
     )
@@ -83,8 +106,6 @@ def main() -> None:
     latest_ts = get_latest_timestamp()
     df_precip_mean = df_precip_mean[df_precip_mean.index > latest_ts]
     
-    write_to_db(df_precip_mean)
+    ingestion_result = write_to_db(df=df_precip_mean)
     
-    
-if __name__ == "__main__":
-    main()
+    return ingestion_result
