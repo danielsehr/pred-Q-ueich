@@ -12,7 +12,9 @@ class DischargeSettings(BaseModel):
 
 class IconSettings(BaseModel):
     url: str
+    urls: list[str]
     compressed_dir: str
+    compressed_dirs: list[str]
     decompressed_dir: str
     clip_crs: str
 
