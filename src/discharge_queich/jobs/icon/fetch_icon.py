@@ -35,7 +35,8 @@ def get_forecast_time(href: str) -> pd.Timestamp:
     date = split[4]
     hour = split[5]
     
-    date = pd.to_datetime(date, format="%Y%m%d00")
+    # date = pd.to_datetime(date, format="%Y%m%d00")
+    date = pd.to_datetime(date, format="%Y%m%d%H")
     
     forecast_time = date + pd.Timedelta(hours=int(hour))
     
@@ -94,7 +95,7 @@ def fetch_icon_metadata(url: str | Path) -> pd.DataFrame:
         raise
     
 
-def get_local_forecast_times(directory: str | Path):
+def get_local_forecast_times(directory: str | Path) -> set:
     directory = Path(directory)
     
     forecast_times = set()
@@ -160,7 +161,3 @@ def fetch_icon() -> None:
             file_name=row["filename"],
             output_dir=icon_settings.compressed_dir,
         )
-
-
-if __name__ == "__main__":
-    fetch_icon()
