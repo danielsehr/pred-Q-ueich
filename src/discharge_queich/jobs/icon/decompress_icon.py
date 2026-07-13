@@ -65,8 +65,13 @@ def decompress_bz2_dir(
                 target_path=target_path
             )
         
+        
         except OSError:
             continue
+        
+        except Exception:
+            logger.error("Failed decompress grib file")
+            raise
         
         decompressed_count += 1
 
