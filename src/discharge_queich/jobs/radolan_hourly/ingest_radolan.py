@@ -1,5 +1,7 @@
+from dataclasses import dataclass
 import pandas as pd
 
+from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -17,55 +19,73 @@ radolan_settings = settings.ingestion.radolan_hourly
 
 
 def get_latest_timestamp() -> pd.Timestamp | None:
-    session = SessionLocal()
+    with SessionLocal() as session:
     
-    try:
-        statement = (
-            select(RadolanPrecipHourlyObservation.timestamp)
-            .order_by(RadolanPrecipHourlyObservation.timestamp.desc())
-            .limit(1)
-        )
-        
-        latest = session.scalar(statement=statement)
-        
-        return pd.Timestamp(latest) if latest is not None else None
-    
-    
-    finally:
-        session.close()
-        
-
-
-def write_to_db(df: pd.DataFrame) -> None:
-    session: Session = SessionLocal()
-    
-    try:
-        for timestamp, row in df.iterrows():
-            
-            entry = RadolanPrecipHourlyObservation(
-                timestamp=timestamp,
-                precip_mean=row["precip_mean"]
+        try:
+            statement = (
+                select(RadolanPrecipHourlyObservation.timestamp)
+                .order_by(RadolanPrecipHourlyObservation.timestamp.desc())
+                .limit(1)
             )
             
-            session.merge(entry)
+            latest = session.scalar(statement=statement)
             
-        session.commit()
-        
-        logger.info("[RADOLAN PRECIP HOURLY OBSERV] Inserted %s rows.", len(df))
-
-    
-    except Exception:
-        session.rollback()
-        logger.exception("[RADOLAN PRECIP HOURLY OBSERV] Failed DB ingestion.")
-        raise
-    
-    
-    finally:
-        session.close()
-        
+            return pd.Timestamp(latest) if latest is not None else None
 
 
-def main() -> None: 
+        except Exception:
+            session.rollback()
+            raise
+
+
+@dataclass
+class IngestionResult:
+    inserted: int = 0
+
+    @property
+    def changed(self) -> bool:
+        return self.inserted > 0
+    
+
+def write_to_db(df: pd.DataFrame) -> IngestionResult:
+    with SessionLocal() as session:
+    
+        try:
+            if df.empty:
+                logger.info("[RADOLAN PRECIP HOURLY OBSERV] No new data.")
+                return IngestionResult()
+                
+            
+            records = (
+                df.reset_index()
+                .rename(columns={"index": "timestamp"})
+                .to_dict(orient="records")
+            )
+
+            stmt = insert(RadolanPrecipHourlyObservation).values(records)
+            
+            stmt = stmt.on_conflict_do_update(
+                index_elements=[RadolanPrecipHourlyObservation.timestamp],
+                set_ = {
+                    RadolanPrecipHourlyObservation.timestamp: stmt.excluded.precip_mean
+                }
+            )
+                
+            session.execute(stmt)
+            session.commit()
+            
+            logger.info("[RADOLAN PRECIP HOURLY OBSERV] Inserted %s rows.", len(records))
+
+            return IngestionResult(inserted=len(records))
+    
+    
+        except Exception:
+            session.rollback()
+            logger.exception("[RADOLAN PRECIP HOURLY OBSERV] Failed DB ingestion.")
+            raise
+
+
+def ingest_radolan() -> IngestionResult: 
     fetch_radolan()
     
     latest_ts = get_latest_timestamp()
@@ -76,8 +96,6 @@ def main() -> None:
         start=latest_ts
     )
     
-    write_to_db(df_precip_mean)
+    ingestion_result = write_to_db(df_precip_mean)
     
-    
-if __name__ == "__main__":
-    main()
+    return ingestion_result
