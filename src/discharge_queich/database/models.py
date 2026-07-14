@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, String, DateTime, UniqueConstraint
+from sqlalchemy import Column, Integer, Float, String, DateTime, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from pandas import Timestamp
 from datetime import datetime
@@ -25,12 +25,31 @@ class Inference(Base):
     # model_version = Column(String)
     
 
-
 class IconPrecipForecast(Base):
     __tablename__ = "icon_precip_mean_forecast"
-        
+
     timestamp: Mapped[datetime] = mapped_column(DateTime, primary_key=True)
     
+    precip_mean: Mapped[float] = mapped_column(Float)
+                
+
+class IconPrecipForecastAllruns(Base):
+    __tablename__ = "icon_precip_mean_forecast_allruns"
+    
+    __table_args__ = (
+        UniqueConstraint(
+            "run_time",
+            "timestamp",
+            name="uq_icon_precip_mean_forecast_allruns",
+        ),
+    )
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+            
+    run_time: Mapped[datetime] =  mapped_column(DateTime, nullable=False)
+    
+    timestamp: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
     precip_mean: Mapped[float] = mapped_column(Float)
 
 
