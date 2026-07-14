@@ -27,17 +27,27 @@ icon:
 
   compressed_dir: "data/forecast_precip/icon_d2/compressed"
   compressed_dirs:
-  - "data/forecast_precip/icon_d2/compressed/00"
-  - "data/forecast_precip/icon_d2/compressed/03"
-  - "data/forecast_precip/icon_d2/compressed/06"
-  - "data/forecast_precip/icon_d2/compressed/09"
-  - "data/forecast_precip/icon_d2/compressed/12"
-  - "data/forecast_precip/icon_d2/compressed/15"
-  - "data/forecast_precip/icon_d2/compressed/18"
-  - "data/forecast_precip/icon_d2/compressed/21"
+  - "data/forecast_precip/icon_d2/00/compressed"
+  - "data/forecast_precip/icon_d2/03/compressed"
+  - "data/forecast_precip/icon_d2/06/compressed"
+  - "data/forecast_precip/icon_d2/09/compressed"
+  - "data/forecast_precip/icon_d2/12/compressed"
+  - "data/forecast_precip/icon_d2/15/compressed"
+  - "data/forecast_precip/icon_d2/18/compressed"
+  - "data/forecast_precip/icon_d2/21/compressed"
 
 
   decompressed_dir: "data/forecast_precip/icon_d2/decompressed"
+  decompressed_dirs:
+  - "data/forecast_precip/icon_d2/00/decompressed"
+  - "data/forecast_precip/icon_d2/03/decompressed"
+  - "data/forecast_precip/icon_d2/06/decompressed"
+  - "data/forecast_precip/icon_d2/09/decompressed"
+  - "data/forecast_precip/icon_d2/12/decompressed"
+  - "data/forecast_precip/icon_d2/15/decompressed"
+  - "data/forecast_precip/icon_d2/18/decompressed"
+  - "data/forecast_precip/icon_d2/21/decompressed"
+
   clip_crs: "EPSG: 4326"
 
 
