@@ -14,6 +14,37 @@ from discharge_queich.utils.logger import logger
 icon_settings = settings.ingestion.icon
 
 
+@dataclass(slots=True)
+class IconMetadata:
+    run_time: pd.Timestamp
+    lead_hour: int
+    valid_time: pd.Timestamp
+    
+
+@dataclass(slots=True)
+class IconDownloadFiles:
+    run: str
+    url: str
+    output_dir: str | Path
+    remote_metadata: pd.DataFrame | None
+    local_filename: set[str] | set[Path] | None
+    missing_files: pd.DataFrame| None
+
+
+    
+def parse_icon_filename(filename: str) -> IconMetadata:
+    split = filename.split("_")    
+    
+    run_time = pd.to_datetime(split[4], format="%Y%m%d%H")
+    lead_hour = int(split[5])
+
+    return IconMetadata(
+        run_time=run_time,
+        lead_hour=lead_hour,
+        valid_time=run_time.normalize() + pd.Timedelta(hours=lead_hour),
+    )
+
+
 def get_upload_time(html_tag: Tag) -> pd.Timestamp | None:
     tail = str(html_tag.next_sibling)
 
@@ -29,22 +60,8 @@ def get_upload_time(html_tag: Tag) -> pd.Timestamp | None:
     )
     
     return upload_time
-
-
-def get_forecast_time(href: str) -> pd.Timestamp:
-    split = href.split("_")
     
-    date = split[4]
-    hour = split[5]
     
-    # date = pd.to_datetime(date, format="%Y%m%d00")
-    date = pd.to_datetime(date, format="%Y%m%d%H")
-    
-    forecast_time = date + pd.Timedelta(hours=int(hour))
-    
-    return forecast_time
-
-
 def fetch_icon_metadata(url: str | Path) -> pd.DataFrame:
     try:
         response = requests.get(str(url), timeout=30)
@@ -71,9 +88,8 @@ def fetch_icon_metadata(url: str | Path) -> pd.DataFrame:
 
 
             # Get forecast time
-            forecast_time = get_forecast_time(href=href)
+            forecast_time = parse_icon_filename(filename=href)
             
-
             # Get upload time
             upload_time = get_upload_time(html_tag=a)
             
@@ -84,7 +100,9 @@ def fetch_icon_metadata(url: str | Path) -> pd.DataFrame:
             # Writ to list
             rows.append({
                 "filename": href,
-                "datetime_forecast": forecast_time,
+                "run_time": forecast_time.run_time,
+                "lead_hour": forecast_time.lead_hour,
+                "valid_time": forecast_time.valid_time,
                 "datetime_upload": upload_time,
                 "url": url,
             })
@@ -94,47 +112,31 @@ def fetch_icon_metadata(url: str | Path) -> pd.DataFrame:
         
         
     except requests.RequestException as e:
-        logger.exception("Failed to fetch icon metadata from %s", url)
+        logger.exception("[ICON PRECIP FORECAST] Failed to fetch metadata from %s", url)
         raise
     
+    
+def get_local_filenames(
+    path: str | Path
+    ) -> set[str] | set[Path]:
+    
+    return {
+        file for file in Path(path).glob("*.grib2.bz2")
+    }
+    
 
-def get_local_forecast_times(directory: str | Path) -> set:
-    directory = Path(directory)
-    
-    forecast_times = set()
-    
-    for file in directory.glob("*.grib2.bz2"):
-        forecast_time = get_forecast_time(href=file.name)
-        
-        forecast_times.add(forecast_time)
-        
-    return forecast_times
-    
-    
-def check_missing_grib_files(
+def get_missing_grib_files(
     df: pd.DataFrame,
-    local_times: set
+    local_names: set
     ) -> pd.DataFrame:
     
     df_missing = df[
-        ~df["datetime_forecast"].isin(local_times)
+        ~df["filename"].isin(local_names)
     ]
     
     return df_missing
-
-
-
-@dataclass(slots=True)
-class IconDownloadFiles:
-    run: str
-    url: str
-    output_dir: str | Path
-    remote_metadata: pd.DataFrame | None
-    local_times: set | None
-    missing_files: pd.DataFrame| None
-    filename: pd.DataFrame | pd.Series | None
-
-
+    
+    
 def build_icon_download_dataclass() -> list[IconDownloadFiles]:
     runs = [
         IconDownloadFiles(
@@ -142,9 +144,8 @@ def build_icon_download_dataclass() -> list[IconDownloadFiles]:
             url=url,
             output_dir=directory,
             remote_metadata=None,
-            local_times=None,
+            local_filename=None,
             missing_files=None,
-            filename=None
         ) 
         for url, directory in zip(
             icon_settings.urls,
@@ -153,23 +154,19 @@ def build_icon_download_dataclass() -> list[IconDownloadFiles]:
         )
     ]
     
+    
     for run in runs:
         run.remote_metadata = fetch_icon_metadata(url=run.url)
         
-        run.local_times = get_local_forecast_times(directory=run.output_dir)
+        run.local_filename = get_local_filenames(path=run.output_dir)
         
-        run.missing_files = check_missing_grib_files(
+        run.missing_files = get_missing_grib_files(
             df=run.remote_metadata,
-            local_times=run.local_times
+            local_names=run.local_filename
         )
-        
-        run.filename = run.missing_files["filename"]
-        
-        if (len(run.missing_files) != 0):
-            logger.info("[RADOLAN PRECIP HOURLY OBSERV] Found %s new files for run %s.", len(run.missing_files), run.run)
     
     return runs
-    
+
 
 def download_icon_file(
     root_url: str,
@@ -187,8 +184,6 @@ def download_icon_file(
 
 
     try:
-        logger.info("Downloading %s", file_name)    
-        
         with requests.get(file_url, timeout=30, stream=True) as r:
                     
             r.raise_for_status()
@@ -197,43 +192,38 @@ def download_icon_file(
                 for chunk in r.iter_content(chunk_size=8192):
                     f.write(chunk)
         
-        logger.info("Saved file to %s", output_path)
+        logger.info("[ICON PRECIP FORECAST] Saved %s to %s",file_name, output_path)
         
         return True        
         
         
     except requests.RequestException:
-        logger.exception("Failed downloading file: %s", file_url)
+        logger.exception("[ICON PRECIP FORECAST] Failed downloading file: %s", file_url)
         raise
     
     except OSError:
-        logger.exception("Failed writing file: %s", output_path)
+        logger.exception("[ICON PRECIP FORECAST] Failed writing file: %s", output_path)
         raise
+    
 
-
-def download_all_icon_files(
-    icon_files: list[IconDownloadFiles]
-    ) -> None:
+def download_all_icon_file(icon_files: list[IconDownloadFiles]):
     
     downloads = 0
     
-    for file in icon_files:
-        if file.filename is not None:
-            for name in file.filename :
-                
-                downloaded = download_icon_file(
-                    root_url=file.url,
-                    file_name=str(name),
-                    output_dir=file.output_dir
-                )
-                
-                if downloaded:
-                    downloads += 1
-                
-    logger.info("Downloaded %s new files", downloads)
-
-
-def fetch_icon() -> None:
-    runs = build_icon_download_dataclass()
-
-    download_all_icon_files(icon_files=runs)
+    for run in icon_files:
+        if run.missing_files is None:
+            continue
+        
+        for filename in run.missing_files["filename"]:
+            downloaded = download_icon_file(
+                root_url=run.url,
+                file_name=filename,
+                output_dir=run.output_dir
+            )
+        
+        if downloaded:
+            downloads += 1
+            
+    logger.info("[ICON PRECIP FORECAST] Downloaded %s new grib files!", downloads)
+            
+            
