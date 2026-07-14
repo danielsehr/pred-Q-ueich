@@ -227,6 +227,7 @@ def download_all_icon_file(icon_files: list[IconDownloadFiles]):
     logger.info("[ICON PRECIP FORECAST] Downloaded %s new grib files!", downloads)
             
             
+            
 def fetch_icon() -> None:
     runs = build_icon_download_dataclass()
     
