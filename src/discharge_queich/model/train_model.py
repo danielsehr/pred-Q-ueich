@@ -2,7 +2,7 @@ from pathlib import Path
 import pandas as pd
 
 from discharge_queich.configs import settings
-from discharge_queich.database.queries import load_discharge_data
+from discharge_queich.database.queries.dashboard import load_discharge_data
 from discharge_queich.model.features import create_training_features
 from discharge_queich.model.dataset import TimeSeriesDataset
 from discharge_queich.model.build_model import model

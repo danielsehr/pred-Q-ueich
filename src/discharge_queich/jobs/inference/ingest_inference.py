@@ -4,7 +4,7 @@ import pandas as pd
 from discharge_queich.utils.logger import logger
 from discharge_queich.database.db import SessionLocal
 from discharge_queich.database.models import Inference
-from discharge_queich.database.queries import load_discharge_data, load_precip_observation_data
+from discharge_queich.database.queries.dashboard import load_discharge_data, load_precip_observation_data
 from discharge_queich.model.features import create_inference_features
 from discharge_queich.model.inference import run_inference
 
