@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from discharge_queich.database.db import SessionLocal 
 from discharge_queich.database.models import Discharge, Inference
-from discharge_queich.database.queries import (
+from discharge_queich.database.queries.dashboard import (
     load_discharge_data, 
     load_inference_data,
     load_precip_observation_data, 
