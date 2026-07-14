@@ -11,9 +11,9 @@ from discharge_queich.utils.logger import logger
 from discharge_queich.database.db import SessionLocal
 from discharge_queich.database.models import IconPrecipForecast
 
-from discharge_queich.jobs.icon.process_icon import build_precip_timeseries
-from discharge_queich.jobs.icon.decompress_icon import decompress_bz2_dir
-from discharge_queich.jobs.icon.fetch_icon import fetch_icon
+from discharge_queich.jobs.icon.process import build_precip_timeseries
+from discharge_queich.jobs.icon.decompress import decompress_bz2_dir
+from discharge_queich.jobs.icon.fetch import fetch_icon
 
 
 icon_settings = settings.ingestion.icon
