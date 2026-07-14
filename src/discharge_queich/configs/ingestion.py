@@ -15,7 +15,10 @@ class IconSettings(BaseModel):
     urls: list[str]
     compressed_dir: str
     compressed_dirs: list[str]
+    
     decompressed_dir: str
+    decompressed_dirs: list[str]
+    
     clip_crs: str
 
 
