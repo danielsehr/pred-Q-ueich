@@ -46,8 +46,6 @@ def decompress_bz2_dir(
     
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # file_paths = [p for p in input_dir.rglob("*.grib2.bz2")]
-
 
     decompressed_count = 0
     
@@ -70,18 +68,24 @@ def decompress_bz2_dir(
             continue
         
         except Exception:
-            logger.error("Failed decompress grib file")
+            logger.error("[ICON PRECIP FORECAST] Failed decompress grib file")
             raise
         
         decompressed_count += 1
 
-    logger.info("Decompressed %s files", decompressed_count)
+    logger.info("[ICON PRECIP FORECAST] Decompressed %s files", decompressed_count)
 
 
-
-if __name__ == "__main__":
-    decompress_bz2_dir(
-        input_dir=icon_settings.compressed_dir,
-        output_dir=icon_settings.decompressed_dir
-    )
-    
+def decompress_all_bz2_dirs() -> None:
+    for compressed_dir, decompressed_dir in zip(
+        icon_settings.compressed_dirs,
+        icon_settings.decompressed_dirs,
+        strict=True
+        ):
+        
+        logger.info("[ICON PRECIP FORECAST] Decompressing %s -> %s", compressed_dir, decompressed_dir)
+        
+        decompress_bz2_dir(
+            input_dir=compressed_dir,
+            output_dir=decompressed_dir
+        )
