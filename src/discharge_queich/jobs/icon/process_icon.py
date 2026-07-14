@@ -11,7 +11,7 @@ from discharge_queich.utils.logger import logger
 @dataclass(slots=True)
 class IconMetadata:
     file_path: str | Path
-    file_name: str | Path
+    file_name: str
     run_time: pd.Timestamp
     lead_hour: int
     valid_time: pd.Timestamp
