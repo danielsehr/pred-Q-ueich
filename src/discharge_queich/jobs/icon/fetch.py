@@ -11,10 +11,75 @@ from discharge_queich.configs import settings
 from discharge_queich.utils.logger import logger
 
 from discharge_queich.jobs.icon.dataclasses import IconDownloadFiles 
-from discharge_queich.jobs.icon.metadata import fetch_remote_metadata
 
 icon_settings = settings.ingestion.icon
+
+
+def get_upload_time(html_tag: Tag) -> pd.Timestamp | None:
+    tail = str(html_tag.next_sibling)
+
+    if tail is None:
+        return None
+
+    parts = tail.strip().split()
+
+    upload_time = pd.to_datetime(
+        f"{parts[0]} {parts[1]}",
+        dayfirst=True
+        # format="%d-%B-%Y %H:%M:%S"
+    )
     
+    return upload_time
+    
+    
+def fetch_remote_metadata(url: str | Path) -> pd.DataFrame:
+    try:
+        response = requests.get(str(url), timeout=30)
+        response.raise_for_status()
+
+    except requests.RequestException as e:
+        logger.exception("[ICON PRECIP FORECAST] Fail in request metadata from %s", url)
+        raise
+        
+        
+    rows = []
+    
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    for a in soup.find_all("a"):
+
+        href = str(a.get("href"))
+        
+        if(
+            href is None
+            or "lat-lon" not in href
+            or not href.endswith(".grib2.bz2")
+        ):
+            continue
+
+        filename = Path(href).stem
+        split = str(filename).split("_")    
+        
+        run_time = pd.to_datetime(split[4], format="%Y%m%d%H")
+        lead_hour = int(split[5])
+        
+        upload_time = get_upload_time(html_tag=a)
+        
+        if upload_time is None:
+            continue
+
+
+        rows.append({
+            "filename": href,
+            "run_time": run_time,
+            "lead_hour": lead_hour,
+            "valid_time": run_time + pd.Timedelta(hours=lead_hour),
+            "datetime_upload": upload_time,
+            "url": url,
+        })
+
+    return pd.DataFrame(rows)
+
     
 def get_local_filenames(path: str | Path) -> set[Path]:
     
