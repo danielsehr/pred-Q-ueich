@@ -11,18 +11,15 @@ from discharge_queich.database.models import IconPrecipForecastAllruns
 
 
 def get_latest_runtime() -> pd.Timestamp | None:
+    stmt = (
+        select(
+            func.max(IconPrecipForecastAllruns.run_time)
+            )
+        )
+    
     with SessionLocal() as session:
         
-        stmt = (
-            func.max(
-                select(IconPrecipForecastAllruns.run_time)
-                .scalar_subquery()
-                )
-            )
-        
-        result = session.execute(stmt)
-        
-        latest = result.scalar()
+        latest = session.execute(stmt).scalar()
         
         if latest is None:
             return None
